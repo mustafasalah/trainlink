@@ -1,6 +1,8 @@
 import Image from "next/image";
 import React from "react";
 import Certification from "../components/Certification";
+import Modal from "../components/Modal";
+import EditProfileSection from "../components/EditProfileSection";
 
 export default async function page({ params }) {
     const userId = 1; //await params.id;
@@ -23,10 +25,7 @@ export default async function page({ params }) {
                             <p>{user.specialization}</p>
                         </div>
                     </div>
-                    <div className="buttons">
-                        <button>Edit Profile</button>{" "}
-                        <button>Change Password</button>
-                    </div>
+                    <EditProfileSection />
                 </div>
                 <div className="student-profile-info">
                     <div className="basic-info">
