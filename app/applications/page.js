@@ -68,7 +68,7 @@ export default async function Applications() {
                     </table>
                     <div className="view-more">
                         <button>View More</button>
-                        <p>(2 of 2 Applications)</p>
+                        <p>(2 of {applications.length} Applications)</p>
                     </div>
                 </div>
             </div>

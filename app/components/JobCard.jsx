@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { format } from "timeago.js";
 
 export default function JobCard({ intern, hideCompanyName = false }) {
     return (
@@ -41,7 +42,7 @@ export default function JobCard({ intern, hideCompanyName = false }) {
             <div className="footer-card">
                 <span>
                     <i className="icon-history"></i>
-                    {intern.datetime}
+                    {format(intern.datetime)}
                 </span>
                 <Link href={`/interns/${intern.id}`}>
                     View details <i className="icon-chevron-right"></i>
