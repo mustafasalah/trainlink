@@ -35,16 +35,20 @@ export default async function Home() {
                 </div>
             </div>
             <div className="available">
-                <h3>Available Opportunities</h3>
+                <h3>Newest Opportunities</h3>
                 <div className="cards">
-                    {jobs.map((job) => (
+                    {jobs.slice(0, 3).map((job) => (
                         <JobCard key={job.id} intern={job} />
                     ))}
                 </div>
             </div>
             <div className="recommend">
                 <h3>Recommended for you</h3>
-                <div className="cards"></div>
+                <div className="cards">
+                    {jobs.slice(3).map((job) => (
+                        <JobCard key={job.id} intern={job} />
+                    ))}
+                </div>
             </div>
         </div>
     );

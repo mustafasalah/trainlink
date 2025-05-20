@@ -50,7 +50,7 @@ export default function Sidebar() {
                         <span>Interns</span>
                     </Link>
                 </li>
-                <li>
+                {/* <li>
                     <Link
                         className={
                             pathname.startsWith("/vision") ? "active" : ""
@@ -60,7 +60,7 @@ export default function Sidebar() {
                         <i className="icon-route"></i>
                         <span>Vision Map</span>
                     </Link>
-                </li>
+                </li> */}
                 <li>
                     <Link
                         className={
@@ -72,7 +72,7 @@ export default function Sidebar() {
                         <span>Forums</span>
                     </Link>
                 </li>
-                <li>
+                {/* <li>
                     <Link
                         className={
                             pathname.startsWith("/settings") ? "active" : ""
@@ -82,7 +82,7 @@ export default function Sidebar() {
                         <i className="icon-settings"></i>
                         <span>Settings</span>
                     </Link>
-                </li>
+                </li> */}
             </ul>
         </div>
     );

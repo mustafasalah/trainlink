@@ -76,7 +76,9 @@ export default function EditProfileSection() {
                         Fundamentals, Programming Python, Java, UI/UX design
                     </textarea>
                 </div>
-                <button className="submet">Edit Profile</button>
+                <button className="submet" onClick={onEditClicked}>
+                    Edit Profile
+                </button>
                 <button className="cancel" onClick={onEditClicked}>
                     Cancel
                 </button>
