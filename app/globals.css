@@ -1226,7 +1226,6 @@ ul {
     img {
     width: 50px;
 }
-/********************************Edit Profile Modal********************************/
 .main-home .content .edit-form-modal {
     width: 800px;
     position: absolute;
@@ -1380,6 +1379,7 @@ ul {
     border: 1px solid #ec2c2c;
     color: #ec2c2c;
 }
+
 /*===================================
 => Forums Style Sheet
 ===================================*/

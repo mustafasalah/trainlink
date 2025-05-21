@@ -6,12 +6,12 @@ export default async function Companies() {
     const compaines = await data.json();
 
     return (
-        <div class="content">
-            <div class="companies">
+        <div className="content">
+            <div className="companies">
                 <h3>
                     Companies<span>(12)</span>
                 </h3>
-                <div class="companies-cards">
+                <div className="companies-cards">
                     {compaines.map(
                         ({ id, thumbnailUrl, name, description }) => (
                             <Card

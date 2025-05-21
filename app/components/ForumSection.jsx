@@ -13,7 +13,7 @@ export default function ForumSection({ title, description, topics }) {
 
             <ul className="topics-list">
                 {topics.map((topic) => (
-                    <TopicItem {...topic} />
+                    <TopicItem key={topic.id} {...topic} />
                 ))}
             </ul>
         </section>

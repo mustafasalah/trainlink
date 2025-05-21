@@ -23,29 +23,39 @@ export default function EditProfileSection() {
             <Modal
                 title="Change My Password"
                 show={showPassowrdModal}
-                className="edit-form-modal"
+                className="password-form-modal"
                 onClose={onEditPasswordClicked}
             >
-                <div class="password-form-modal-content">
-                    <div class="old-pass">
-                        <h3>Old Password</h3>
-                        <input type="text" value="12345678" />
-                    </div>
-                    <div class="new">
-                        <div class="new-pass">
-                            <h3>New Password</h3>
-                            <input type="password" value="rashasalah" />
-                        </div>
-                        <div class="co-pass">
-                            <h3>Confirm New Password</h3>
-                            <input type="password" value="rashasalah" />
-                        </div>
-                    </div>
-                    <button class="change">Change</button>
-                    <button class="cancel" onClick={onEditPasswordClicked}>
-                        Cancel
-                    </button>
+                <div class="old-pass">
+                    <h3>Old Password</h3>
+                    <input
+                        type="password"
+                        onChange={() => {}}
+                        value="12345678"
+                    />
                 </div>
+                <div class="new">
+                    <div class="new-pass">
+                        <h3>New Password</h3>
+                        <input
+                            type="password"
+                            onChange={() => {}}
+                            value="rashasalah"
+                        />
+                    </div>
+                    <div class="co-pass">
+                        <h3>Confirm New Password</h3>
+                        <input
+                            type="password"
+                            onChange={() => {}}
+                            value="rashasalah"
+                        />
+                    </div>
+                </div>
+                <button class="change">Change</button>{" "}
+                <button class="cancel" onClick={onEditPasswordClicked}>
+                    Cancel
+                </button>
             </Modal>
             <Modal
                 title="Edit My Profile"
@@ -55,30 +65,39 @@ export default function EditProfileSection() {
             >
                 <div className="student-name">
                     <h3>Student Name</h3>
-                    <input type="text" value="Rasha Salah Alnour" readonly />
+                    <input type="text" value="Rasha Salah Alnour" readOnly />
                 </div>
                 <div className="student-id">
                     <h3>Student ID</h3>
-                    <input type="text" value="201822000554" readonly />
+                    <input type="text" value="201822000554" readOnly />
                 </div>
                 <div className="email">
                     <h3>Email</h3>
-                    <input type="email" value="rashasalah2911@gmail.com" />
+                    <input
+                        type="email"
+                        onChange={() => {}}
+                        value="rashasalah2911@gmail.com"
+                    />
                 </div>
                 <div className="phone">
                     <h3>Phone Number</h3>
-                    <input type="text" value="+249 912 345 678" />
+                    <input
+                        type="text"
+                        onChange={() => {}}
+                        value="+249 912 345 678"
+                    />
                 </div>
                 <div className="skills">
                     <h3>Skills / Interests</h3>
-                    <textarea name="" id="">
-                        Web Development, Database Management, Network
-                        Fundamentals, Programming Python, Java, UI/UX design
-                    </textarea>
+                    <textarea
+                        name="skills"
+                        onChange={() => {}}
+                        value={`Web Development, Database Management, Network Fundamentals, Programming Python, Java, UI/UX design`}
+                    />
                 </div>
                 <button className="submet" onClick={onEditClicked}>
                     Edit Profile
-                </button>
+                </button>{" "}
                 <button className="cancel" onClick={onEditClicked}>
                     Cancel
                 </button>
