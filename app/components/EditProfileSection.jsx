@@ -26,7 +26,7 @@ export default function EditProfileSection() {
                 className="password-form-modal"
                 onClose={onEditPasswordClicked}
             >
-                <div class="old-pass">
+                <div className="old-pass">
                     <h3>Old Password</h3>
                     <input
                         type="password"
@@ -34,8 +34,8 @@ export default function EditProfileSection() {
                         value="12345678"
                     />
                 </div>
-                <div class="new">
-                    <div class="new-pass">
+                <div className="new">
+                    <div className="new-pass">
                         <h3>New Password</h3>
                         <input
                             type="password"
@@ -43,7 +43,7 @@ export default function EditProfileSection() {
                             value="rashasalah"
                         />
                     </div>
-                    <div class="co-pass">
+                    <div className="co-pass">
                         <h3>Confirm New Password</h3>
                         <input
                             type="password"
@@ -52,8 +52,8 @@ export default function EditProfileSection() {
                         />
                     </div>
                 </div>
-                <button class="change">Change</button>{" "}
-                <button class="cancel" onClick={onEditPasswordClicked}>
+                <button className="change">Change</button>{" "}
+                <button className="cancel" onClick={onEditPasswordClicked}>
                     Cancel
                 </button>
             </Modal>

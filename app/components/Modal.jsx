@@ -20,10 +20,10 @@ export default function Modal({
             }}
         >
             <div className={className} style={{ zIndex: 99 }}>
-                <div class={className + "-head"}>
+                <div className={className + "-head"}>
                     <h2>{title}</h2>
                     <button onClick={onClose}>
-                        <i class="icon-x"></i>
+                        <i className="icon-x"></i>
                     </button>
                 </div>
                 <div className={className + "-content"}>{children}</div>

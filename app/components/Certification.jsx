@@ -24,7 +24,10 @@ export default function Certification({
                         }}
                     >
                         Prvoided by <strong>{issuer}</strong> in{" "}
-                        <time style={{ fontStyle: "italic" }} datetime>
+                        <time
+                            style={{ fontStyle: "italic" }}
+                            dateTime={issueDate}
+                        >
                             {issueDate}
                         </time>
                     </p>
