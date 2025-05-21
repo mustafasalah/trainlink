@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import JobCard from "../components/JobCard";
 import MyInternsSection from "../components/MyInternsSection";
+
+export const dynamic = "force-dynamic";
 
 export default async function page() {
     const data = await fetch("http://localhost:3000/api/jobs");

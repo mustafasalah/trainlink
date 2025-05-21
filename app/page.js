@@ -1,6 +1,8 @@
 import Image from "next/image";
 import JobCard from "./components/JobCard";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
     const data = await fetch("http://localhost:3000/api/jobs");
     const jobs = await data.json();

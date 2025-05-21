@@ -1,8 +1,9 @@
 import Image from "next/image";
 import React from "react";
 import Certification from "../components/Certification";
-import Modal from "../components/Modal";
 import EditProfileSection from "../components/EditProfileSection";
+
+export const dynamic = "force-dynamic";
 
 export default async function page({ params }) {
     const userId = 1; //await params.id;

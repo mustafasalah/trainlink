@@ -1,6 +1,8 @@
 import React from "react";
 import Card from "../components/Card";
 
+export const dynamic = "force-dynamic";
+
 export default async function Companies() {
     const data = await fetch("http://localhost:3000/api/companies");
     const compaines = await data.json();
