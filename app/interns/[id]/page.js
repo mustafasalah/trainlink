@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import JobCard from "../../components/JobCard";
-import BackButton from "@/app/components/BackButton";
+import ApplySection from "@/app/components/ApplySection";
 
 export default async function InternDetails({ params }) {
     const jobId = await params.id;
@@ -75,38 +74,46 @@ export default async function InternDetails({ params }) {
                                 )}
                             </ul>
                         </div>
-                        <div className="intern-application-process">
-                            <h3>Contact Information</h3>
-                            <ul>
-                                <li>
-                                    Click the <span>"Apply Now"</span> button
-                                    below.
-                                </li>
-                                <li>
-                                    You will be redirected to an application
-                                    form.
-                                </li>
-                                <li>
-                                    Please upload the following documents in PDF
-                                    format:
-                                    <ol>
-                                        <i className="icon-refresh-cw"></i>
-                                        Updated Resume/CV.
-                                    </ol>
-                                    <ol>
-                                        <i className="icon-book-open-text"></i>
-                                        Academic Transcript.
-                                    </ol>
-                                    <ol>
-                                        <i className="icon-file-text"></i>Cover
-                                        Letter outlining your relevant skills
-                                        and experience.
-                                    </ol>
-                                </li>
-                            </ul>
-                        </div>
+                        {job.status === null ? (
+                            <div className="intern-application-process">
+                                <h3>Application Process</h3>
+                                <ul>
+                                    <li>
+                                        Click the <span>"Apply Now"</span>{" "}
+                                        button below.
+                                    </li>
+                                    <li>
+                                        You will be redirected to an application
+                                        form.
+                                    </li>
+                                    <li>
+                                        Please upload the following documents in
+                                        PDF format:
+                                        <ol>
+                                            <i className="icon-refresh-cw"></i>
+                                            Updated Resume/CV.
+                                        </ol>
+                                        <ol>
+                                            <i className="icon-book-open-text"></i>
+                                            Academic Transcript.
+                                        </ol>
+                                        <ol>
+                                            <i className="icon-file-text"></i>
+                                            Cover Letter outlining your relevant
+                                            skills and experience.
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+                        ) : (
+                            ""
+                        )}
                     </div>
-                    <button>Apply Now</button>
+                    {job.status === null ? (
+                        <ApplySection job={job} company={company} />
+                    ) : (
+                        ""
+                    )}
                 </div>
             </div>
         </div>
