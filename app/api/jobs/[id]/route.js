@@ -1,9 +1,9 @@
-import compaines from "@/app/DB/jobs";
+import jobs from "@/app/DB/jobs";
 
 export async function GET(request, { params }) {
-    // Get Compaine Details
-    const jobId = await params.id;
-    const job = compaines.find(({ id }) => id == jobId);
+    // Get Job Details
+    const jobId = (await params).id;
+    const job = jobs.find(({ id }) => id == jobId);
 
     if (job) {
         return new Response(JSON.stringify(job), {

@@ -2,9 +2,13 @@ import Image from "next/image";
 import React from "react";
 import ApplySection from "@/app/components/ApplySection";
 
+export const dynamic = "force-dynamic";
+
 export default async function InternDetails({ params }) {
-    const jobId = await params.id;
-    const jobData = await fetch(`http://localhost:3000/api/jobs/${jobId}`);
+    const jobId = (await params).id;
+    const jobData = await fetch(`http://localhost:3000/api/jobs/${jobId}`, {
+        next: { tags: ["jobs"] },
+    });
     const job = await jobData.json();
 
     const companyData = await fetch(
@@ -23,7 +27,7 @@ export default async function InternDetails({ params }) {
                             width="1035"
                             height="250"
                         />
-                        <p>{job.title}</p>
+                        <p>{job.title + " " + job.status}</p>
                     </div>
                     <div className="intern-details-info">
                         <h3 className="provided-by">

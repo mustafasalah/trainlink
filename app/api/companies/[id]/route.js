@@ -2,7 +2,7 @@ import compaines from "@/app/DB/compaines";
 
 export async function GET(request, { params }) {
     // Get Compaine Details
-    const companyId = await params.id;
+    const companyId = (await params).id;
     const company = compaines.find(({ id }) => id == companyId);
 
     if (company) {

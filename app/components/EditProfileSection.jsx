@@ -99,7 +99,6 @@ export default function EditProfileSection({ user }) {
                     <textarea
                         name="skills"
                         onChange={({ target: { value } }) => {
-                            console.log(value);
                             setSkills(value);
                         }}
                         value={skills}

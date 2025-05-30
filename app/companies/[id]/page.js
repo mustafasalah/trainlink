@@ -13,7 +13,10 @@ export default async function CompanyDetials({ params }) {
     const company = await companyData.json();
 
     const JobData = await fetch(
-        `http://localhost:3000/api/jobs?companyId=${companyId}`
+        `http://localhost:3000/api/jobs?companyId=${companyId}`,
+        {
+            next: { tags: ["jobs"] },
+        }
     );
     const jobs = await JobData.json();
 

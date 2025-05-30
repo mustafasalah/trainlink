@@ -61,7 +61,7 @@ export default async function Applications() {
                             </tr>
                         </thead>
                         <tbody>
-                            {applications.map((application) => (
+                            {applications.reverse().map((application) => (
                                 <ApplicationRow
                                     key={application.id}
                                     {...application}

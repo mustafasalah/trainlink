@@ -2,13 +2,25 @@
 
 import React, { useCallback, useState } from "react";
 import Modal from "./Modal";
+import { useRouter } from "next/navigation";
 
 export default function ApplySection({ job, company }) {
     const [showApplyModal, changeShowApplyModal] = useState(false);
-    const onApplyClicked = useCallback(
-        () => changeShowApplyModal(!showApplyModal),
-        [showApplyModal]
-    );
+    const router = useRouter();
+
+    const onApplyClicked = useCallback(async () => {
+        await fetch("http://localhost:3000/api/applications/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: job.title, jobId: job.id }),
+        });
+        alert("Your Application has been submitted successfully!");
+        setSuccess(true);
+        router.push("/applications");
+    }, [job]);
+
     const [success, setSuccess] = useState(false);
 
     return (
@@ -16,7 +28,7 @@ export default function ApplySection({ job, company }) {
             <button
                 disabled={success}
                 style={success ? { backgroundColor: "gray" } : {}}
-                onClick={onApplyClicked}
+                onClick={() => changeShowApplyModal(!showApplyModal)}
             >
                 Apply Now
             </button>
@@ -24,7 +36,7 @@ export default function ApplySection({ job, company }) {
                 title="Application Form"
                 show={showApplyModal}
                 className="edit-form-modal"
-                onClose={onApplyClicked}
+                onClose={() => changeShowApplyModal(!showApplyModal)}
             >
                 <div className="student-name">
                     <h3>Company Name</h3>
@@ -42,19 +54,13 @@ export default function ApplySection({ job, company }) {
                     <h3>Cover letter</h3>
                     <input type="file" onChange={() => {}} />
                 </div>
-                <button
-                    className="submet"
-                    onClick={() => {
-                        onApplyClicked();
-                        alert(
-                            "Your Application has been submitted successfully!"
-                        );
-                        setSuccess(true);
-                    }}
-                >
+                <button className="submet" onClick={onApplyClicked}>
                     Submit Form
                 </button>{" "}
-                <button className="cancel" onClick={onApplyClicked}>
+                <button
+                    className="cancel"
+                    onClick={() => changeShowApplyModal(!showApplyModal)}
+                >
                     Cancel
                 </button>
             </Modal>
