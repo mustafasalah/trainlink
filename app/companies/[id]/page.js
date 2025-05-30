@@ -6,7 +6,7 @@ import BackButton from "@/app/components/BackButton";
 export const dynamic = "force-dynamic";
 
 export default async function CompanyDetials({ params }) {
-    const companyId = await params.id;
+    const companyId = (await params).id;
     const companyData = await fetch(
         `http://localhost:3000/api/companies/${companyId}`
     );

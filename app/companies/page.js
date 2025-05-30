@@ -11,7 +11,7 @@ export default async function Companies() {
         <div className="content">
             <div className="companies">
                 <h3>
-                    Companies<span>(12)</span>
+                    Companies<span>({compaines.length})</span>
                 </h3>
                 <div className="companies-cards">
                     {compaines.map(

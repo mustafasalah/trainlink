@@ -26,7 +26,7 @@ export default async function page({ params }) {
                             <p>{user.specialization}</p>
                         </div>
                     </div>
-                    <EditProfileSection />
+                    <EditProfileSection user={user} />
                 </div>
                 <div className="student-profile-info">
                     <div className="basic-info">

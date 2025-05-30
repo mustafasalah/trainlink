@@ -1,14 +1,14 @@
 export default [
     {
         id: 1,
-        title: "Software Development Intern",
-        status: "pending",
-        datetime: "2024-08-11 12:48:03",
+        title: "Full-Stack Developer",
+        status: "approved",
+        datetime: "2024-08-10 01:18:23",
     },
     {
         id: 2,
-        title: "Data Analytics Training Program",
+        title: "Data Analytics",
         status: "approved",
-        datetime: "2024-08-10 01:18:23",
+        datetime: "2024-08-11 12:48:03",
     },
 ];
