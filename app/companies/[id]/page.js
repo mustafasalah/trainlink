@@ -68,7 +68,7 @@ export default async function CompanyDetials({ params }) {
                                 <div className="cards">
                                     {jobs.map((job) => (
                                         <JobCard
-                                            key={job.id}
+                                            key={job._id}
                                             intern={job}
                                             hideCompanyName
                                         />

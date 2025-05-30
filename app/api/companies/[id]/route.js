@@ -1,9 +1,13 @@
-import compaines from "@/app/DB/compaines";
+import connectDB from "@/app/DBconnection";
+import Company from "@/app/models/Company";
 
 export async function GET(request, { params }) {
+    // Make a database connection
+    await connectDB();
+
     // Get Compaine Details
     const companyId = (await params).id;
-    const company = compaines.find(({ id }) => id == companyId);
+    const company = await Company.findOne({ _id: companyId });
 
     if (company) {
         return new Response(JSON.stringify(company), {

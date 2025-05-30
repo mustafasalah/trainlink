@@ -34,7 +34,7 @@ export default function MyInternsSection({ jobs }) {
                         filter === null ? true : job.status === filter
                     )
                     .map((job) => (
-                        <JobCard key={job.id} intern={job} />
+                        <JobCard key={job._id} intern={job} />
                     ))}
             </div>
         </div>

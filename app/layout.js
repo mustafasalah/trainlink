@@ -5,6 +5,10 @@ import "./assets/icons/lucide.css";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import StudentBar from "./components/StudentBar";
+import connectDB from "./DBconnection";
+
+// Connect to MongoDB
+connectDB();
 
 const myFont = localFont({
     src: "./assets/fonts/Montserrat/Montserrat-Regular.ttf",

@@ -1,8 +1,14 @@
-import applications from "@/app/DB/applications";
-import jobs from "@/app/DB/jobs";
+import connectDB from "@/app/DBconnection";
+import Application from "@/app/models/Application";
+import Job from "@/app/models/Job";
 import { revalidateTag } from "next/cache";
 
 export async function GET(request) {
+    // Make a database connection
+    await connectDB();
+
+    const applications = await Application.find();
+
     return new Response(JSON.stringify(applications), {
         status: 200,
         headers: {
@@ -14,17 +20,21 @@ export async function GET(request) {
 export async function POST(request) {
     const req = await request.json();
 
-    const job = jobs.find((job) => job.id === req.jobId);
-    job.status = "ongoing";
+    await Job.updateOne({ _id: req.jobId }, { status: "ongoing" });
     revalidateTag("jobs");
 
-    applications.push({
-        id: applications.length,
+    new Application({
         internId: req.jobId,
         title: req.title,
         status: "pending",
-        datetime: new Date().toISOString().replace("T", " ").slice(0, -5),
-    });
+        datetime: new Date().toISOString(),
+    }).save();
+
+    // applications.push({
+    //     id: applications.length,
+
+    //     datetime: new Date().toISOString().replace("T", " ").slice(0, -5),
+    // });
 
     return new Response("Done", {
         status: 200,

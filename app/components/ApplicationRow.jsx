@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 
 export default function ApplicationRow({
-    id,
+    _id,
     internId,
     title,
     status,
@@ -18,7 +18,7 @@ export default function ApplicationRow({
             </td>
             <td>{datetime}</td>
             <td>
-                <Link href={`/applications?id=${id}`}>Details</Link>{" "}
+                <Link href={`/applications?id=${_id}`}>Details</Link>{" "}
             </td>
         </tr>
     );

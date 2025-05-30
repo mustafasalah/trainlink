@@ -27,7 +27,7 @@ export default async function InternDetails({ params }) {
                             width="1035"
                             height="250"
                         />
-                        <p>{job.title + " " + job.status}</p>
+                        <p>{job.title}</p>
                     </div>
                     <div className="intern-details-info">
                         <h3 className="provided-by">

@@ -15,10 +15,10 @@ export default async function Companies() {
                 </h3>
                 <div className="companies-cards">
                     {compaines.map(
-                        ({ id, thumbnailUrl, name, description }) => (
+                        ({ _id, thumbnailUrl, name, description }) => (
                             <Card
-                                key={id}
-                                url={`/companies/${id}`}
+                                key={_id}
+                                url={`/companies/${_id}`}
                                 thumbnailUrl={thumbnailUrl}
                                 title={name}
                                 description={description}

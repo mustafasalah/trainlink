@@ -44,7 +44,7 @@ export default function JobCard({ intern, hideCompanyName = false }) {
                     <i className="icon-history"></i>
                     {format(intern.datetime)}
                 </span>
-                <Link href={`/interns/${intern.id}`}>
+                <Link href={`/interns/${intern._id}`}>
                     View details <i className="icon-chevron-right"></i>
                 </Link>
             </div>
