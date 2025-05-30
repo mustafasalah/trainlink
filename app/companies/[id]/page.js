@@ -8,12 +8,12 @@ export const dynamic = "force-dynamic";
 export default async function CompanyDetials({ params }) {
     const companyId = (await params).id;
     const companyData = await fetch(
-        `http://localhost:3000/api/companies/${companyId}`
+        `https://trainlink.fly.dev/api/companies/${companyId}`
     );
     const company = await companyData.json();
 
     const JobData = await fetch(
-        `http://localhost:3000/api/jobs?companyId=${companyId}`,
+        `https://trainlink.fly.dev/api/jobs?companyId=${companyId}`,
         {
             next: { tags: ["jobs"] },
         }

@@ -4,7 +4,7 @@ import JobCard from "./components/JobCard";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-    const data = await fetch("http://localhost:3000/api/jobs", {
+    const data = await fetch("https://trainlink.fly.dev/api/jobs", {
         next: { tags: ["jobs"] },
     });
     const jobs = await data.json();

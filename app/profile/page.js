@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function page({ params }) {
     const userId = "68393e573ccf07820a5e409e"; //await params.id;
-    const userData = await fetch(`http://localhost:3000/api/users/${userId}`);
+    const userData = await fetch(
+        `https://trainlink.fly.dev/api/users/${userId}`
+    );
     const user = await userData.json();
 
     return (

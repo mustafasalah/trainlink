@@ -6,13 +6,13 @@ export const dynamic = "force-dynamic";
 
 export default async function InternDetails({ params }) {
     const jobId = (await params).id;
-    const jobData = await fetch(`http://localhost:3000/api/jobs/${jobId}`, {
+    const jobData = await fetch(`https://trainlink.fly.dev/api/jobs/${jobId}`, {
         next: { tags: ["jobs"] },
     });
     const job = await jobData.json();
 
     const companyData = await fetch(
-        `http://localhost:3000/api/companies/${job.companyId}`
+        `https://trainlink.fly.dev/api/companies/${job.companyId}`
     );
     const company = await companyData.json();
 

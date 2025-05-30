@@ -4,7 +4,7 @@ import ApplicationRow from "../components/ApplicationRow";
 export const dynamic = "force-dynamic";
 
 export default async function Applications() {
-    const data = await fetch("http://localhost:3000/api/applications");
+    const data = await fetch("https://trainlink.fly.dev/api/applications");
     const applications = await data.json();
 
     return (
