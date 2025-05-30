@@ -63,7 +63,7 @@ export default async function Applications() {
                         <tbody>
                             {applications.reverse().map((application) => (
                                 <ApplicationRow
-                                    key={application.id}
+                                    key={application._id}
                                     {...application}
                                 />
                             ))}

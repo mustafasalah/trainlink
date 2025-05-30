@@ -42,7 +42,7 @@ export default async function Home() {
                 <h3>Newest Opportunities</h3>
                 <div className="cards">
                     {jobs.slice(0, 3).map((job) => (
-                        <JobCard key={job.id} intern={job} />
+                        <JobCard key={job._id} intern={job} />
                     ))}
                 </div>
             </div>
@@ -50,7 +50,7 @@ export default async function Home() {
                 <h3>Recommended for you</h3>
                 <div className="cards">
                     {jobs.slice(3).map((job) => (
-                        <JobCard key={job.id} intern={job} />
+                        <JobCard key={job._id} intern={job} />
                     ))}
                 </div>
             </div>

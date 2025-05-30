@@ -2,17 +2,20 @@
 
 import React, { useCallback, useState } from "react";
 import Modal from "./Modal";
-import { Router } from "next/router";
 
 export default function EditProfileSection({ user }) {
     const [email, setEmail] = useState(user.email);
     const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
     const [skills, setSkills] = useState(user.academic?.skills || "");
 
+    const [oldPass, setOldPass] = useState("");
+    const [newPass, setNewPass] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
+
     const [showEditModal, changeShowEditModal] = useState(false);
     const [showPassowrdModal, changeShowPasswordModal] = useState(false);
     const onEditClicked = useCallback(async () => {
-        await fetch("http://localhost:3000/api/users/" + user.id, {
+        await fetch("http://localhost:3000/api/users/" + user._id, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -43,19 +46,57 @@ export default function EditProfileSection({ user }) {
             >
                 <div className="old-pass">
                     <h3>Old Password</h3>
-                    <input type="password" onChange={() => {}} value="" />
+                    <input
+                        type="password"
+                        onChange={({ target: { value } }) => {
+                            setOldPass(value);
+                        }}
+                        value={oldPass}
+                    />
                 </div>
                 <div className="new">
                     <div className="new-pass">
                         <h3>New Password</h3>
-                        <input type="password" onChange={() => {}} value="" />
+                        <input
+                            type="password"
+                            onChange={({ target: { value } }) => {
+                                setNewPass(value);
+                            }}
+                            value={newPass}
+                        />
                     </div>
                     <div className="co-pass">
                         <h3>Confirm New Password</h3>
-                        <input type="password" onChange={() => {}} value="" />
+                        <input
+                            type="password"
+                            onChange={({ target: { value } }) => {
+                                setConfirmPass(value);
+                            }}
+                            value={confirmPass}
+                        />
                     </div>
                 </div>
-                <button className="change">Change</button>{" "}
+                <button
+                    className="change"
+                    onClick={() => {
+                        if (
+                            oldPass !== "" &&
+                            newPass !== "" &&
+                            confirmPass === newPass
+                        ) {
+                            alert(
+                                "Your password has been changed successfully!"
+                            );
+                            onEditPasswordClicked();
+                        } else {
+                            alert(
+                                "There is an error in the password you entered!"
+                            );
+                        }
+                    }}
+                >
+                    Change
+                </button>{" "}
                 <button className="cancel" onClick={onEditPasswordClicked}>
                     Cancel
                 </button>
@@ -64,7 +105,7 @@ export default function EditProfileSection({ user }) {
                 title="Edit My Profile"
                 show={showEditModal}
                 className="edit-form-modal"
-                onClose={onEditClicked}
+                onClose={() => changeShowEditModal(!showEditModal)}
             >
                 <div className="student-name">
                     <h3>Student Name</h3>

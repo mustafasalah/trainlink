@@ -22,7 +22,7 @@ export default async function page() {
                     </h3>
                     <div className="cards">
                         {availableJobs.map((job) => (
-                            <JobCard key={job.id} intern={job} />
+                            <JobCard key={job._id} intern={job} />
                         ))}
                     </div>
                     {/* <div className="view-more">

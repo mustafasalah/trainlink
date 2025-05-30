@@ -6,7 +6,7 @@ import EditProfileSection from "../components/EditProfileSection";
 export const dynamic = "force-dynamic";
 
 export default async function page({ params }) {
-    const userId = 1; //await params.id;
+    const userId = "68393e573ccf07820a5e409e"; //await params.id;
     const userData = await fetch(`http://localhost:3000/api/users/${userId}`);
     const user = await userData.json();
 
@@ -94,7 +94,7 @@ export default async function page({ params }) {
                         <h3>My Certifications</h3>
                         {user.certifications.map((certification) => (
                             <Certification
-                                key={certification.id}
+                                key={certification.title}
                                 info={certification}
                             />
                         ))}

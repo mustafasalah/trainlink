@@ -14,7 +14,7 @@ export default function ApplySection({ job, company }) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ title: job.title, jobId: job.id }),
+            body: JSON.stringify({ title: job.title, jobId: job._id }),
         });
         alert("Your Application has been submitted successfully!");
         setSuccess(true);
