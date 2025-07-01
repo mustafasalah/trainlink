@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import JobCard from "../../components/JobCard";
+import JobCard from "../../../components/JobCard";
 import BackButton from "@/app/components/BackButton";
 
 export const dynamic = "force-dynamic";

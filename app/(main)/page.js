@@ -1,5 +1,5 @@
 import Image from "next/image";
-import JobCard from "./components/JobCard";
+import JobCard from "../components/JobCard";
 
 export const dynamic = "force-dynamic";
 

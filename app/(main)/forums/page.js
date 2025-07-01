@@ -1,8 +1,5 @@
 import React from "react";
-import ApplicationRow from "../components/ApplicationRow";
-import Link from "next/link";
-import TopicItem from "../components/TopicItem";
-import ForumSection from "../components/ForumSection";
+import ForumSection from "../../components/ForumSection";
 
 export default async function Forums() {
     // const data = await fetch("https://trainlink.fly.dev/api/applications");

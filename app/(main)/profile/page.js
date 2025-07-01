@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
-import Certification from "../components/Certification";
-import EditProfileSection from "../components/EditProfileSection";
+import Certification from "../../components/Certification";
+import EditProfileSection from "../../components/EditProfileSection";
 
 export const dynamic = "force-dynamic";
 

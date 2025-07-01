@@ -1,10 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import "./assets/icons/lucide.css";
-
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
-import StudentBar from "./components/StudentBar";
 import connectDB from "./DBconnection";
 
 // Connect to MongoDB
@@ -18,19 +14,10 @@ export const metadata = {
     title: "TrainLink Platform",
 };
 
-export default function RootLayouts({ children }) {
+export default async function RootLayouts({ children }) {
     return (
         <html lang="en">
-            <body className={myFont.className}>
-                <div className="page">
-                    <Sidebar />
-                    <div className="main-home">
-                        <Header />
-                        {children}
-                    </div>
-                    <StudentBar />
-                </div>
-            </body>
+            <body className={myFont.className}>{children}</body>
         </html>
     );
 }

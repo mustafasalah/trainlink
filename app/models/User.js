@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const certificationSchema = new mongoose.Schema(
     {
@@ -85,6 +86,17 @@ const userSchema = new mongoose.Schema(
             trim: true,
             lowercase: true,
         },
+        password: {
+            type: String,
+            required: [true, "Please provide a password"],
+            minlength: [6, "Password must be at least 6 characters long"],
+            select: false, // Don't return password by default on queries
+        },
+        role: {
+            type: String,
+            enum: ["Student", "Admin", "ERO", "Company"],
+            default: "Student",
+        },
         phoneNumber: {
             type: String,
             required: false, // Phone number might be optional
@@ -92,17 +104,42 @@ const userSchema = new mongoose.Schema(
         },
         academic: {
             type: academicSchema,
-            required: true, // Assuming academic information is required for an intern user
         },
         certifications: {
             type: [certificationSchema], // Array of certification subdocuments
             default: [], // Default to an empty array if no certifications are provided
         },
+        username: {
+            // username for users except students
+            type: String,
+            minlength: [2, "Username must be at least 2 characters long"],
+            unique: true,
+            sparse: true,
+            trim: true,
+        },
+        // Company-specific fields (example, for company role's main contact)
+        companyId: mongoose.Schema.Types.ObjectId, // Link to actual Company model
+        companyName: String,
     },
     {
         timestamps: true,
     }
 );
+
+// Hash password before saving
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+// Method to compare password
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

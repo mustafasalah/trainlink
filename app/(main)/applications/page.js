@@ -1,5 +1,5 @@
 import React from "react";
-import ApplicationRow from "../components/ApplicationRow";
+import ApplicationRow from "../../components/ApplicationRow";
 
 export const dynamic = "force-dynamic";
 

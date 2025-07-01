@@ -1,6 +1,6 @@
 import React from "react";
-import JobCard from "../components/JobCard";
-import MyInternsSection from "../components/MyInternsSection";
+import JobCard from "../../components/JobCard";
+import MyInternsSection from "../../components/MyInternsSection";
 
 export const dynamic = "force-dynamic";
 
