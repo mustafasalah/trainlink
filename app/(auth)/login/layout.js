@@ -7,5 +7,5 @@ export default async function layout({ children }) {
 
     if (loggedUser) return redirect("/");
 
-    return <div>{children}</div>;
+    return children;
 }
