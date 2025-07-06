@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import useLoggedUser from "../hooks/useLoggedUser";
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const loggedUser = useLoggedUser();
 
     return (
         <div className="sidebar">
@@ -17,39 +19,55 @@ export default function Sidebar() {
                         <span>Home</span>
                     </Link>
                 </li>
-                <li>
-                    <Link
-                        className={
-                            pathname.startsWith("/companies") ? "active" : ""
-                        }
-                        href="/companies"
-                    >
-                        <i className="icon-building-2"></i>
-                        <span>Companies</span>
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        className={
-                            pathname.startsWith("/applications") ? "active" : ""
-                        }
-                        href="/applications"
-                    >
-                        <i className="icon-history"></i>
-                        <span>Applications</span>
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        className={
-                            pathname.startsWith("/interns") ? "active" : ""
-                        }
-                        href="/interns"
-                    >
-                        <i className="icon-graduation-cap"></i>
-                        <span>Interns</span>
-                    </Link>
-                </li>
+                {/^(Admin|Student)$/.test(loggedUser.role) ? (
+                    <li>
+                        <Link
+                            className={
+                                pathname.startsWith("/companies")
+                                    ? "active"
+                                    : ""
+                            }
+                            href="/companies"
+                        >
+                            <i className="icon-building-2"></i>
+                            <span>Companies</span>
+                        </Link>
+                    </li>
+                ) : (
+                    ""
+                )}
+                {/^(Admin|Student|Company)$/.test(loggedUser.role) ? (
+                    <li>
+                        <Link
+                            className={
+                                pathname.startsWith("/applications")
+                                    ? "active"
+                                    : ""
+                            }
+                            href="/applications"
+                        >
+                            <i className="icon-history"></i>
+                            <span>Applications</span>
+                        </Link>
+                    </li>
+                ) : (
+                    ""
+                )}
+                {loggedUser.role === "Student" ? (
+                    <li>
+                        <Link
+                            className={
+                                pathname.startsWith("/interns") ? "active" : ""
+                            }
+                            href="/interns"
+                        >
+                            <i className="icon-graduation-cap"></i>
+                            <span>Interns</span>
+                        </Link>
+                    </li>
+                ) : (
+                    ""
+                )}
                 {/* <li>
                     <Link
                         className={

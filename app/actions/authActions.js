@@ -61,6 +61,10 @@ export async function loginAction(prevState, formData) {
             role: user.role,
             email: user.email,
             fullName: user.fullName,
+            phoneNumber: user.phoneNumber,
+            profileImage: user.profileImage,
+            about: user.about,
+
             // Include identifier relevant to the user type
             loginIdentifier:
                 user.role === "Student" ? user.studentId : user.username,
@@ -68,14 +72,14 @@ export async function loginAction(prevState, formData) {
             ...(user.role === "Student" && {
                 studentId: user.studentId,
                 specialization: user.specialization,
-                academic: user.academic, // Include full academic object
+                academic: user.academic,
+                certifications: user.certifications,
             }),
             ...(user.role === "Company" &&
                 user.companyId && {
                     companyId: user.companyId.toString(),
                     companyName: user.companyName,
                 }),
-            // For Admin/ERO, their basic info is likely sufficient in payload
         };
 
         const token = jwt.sign(payload, JWT_SECRET, {
@@ -89,7 +93,7 @@ export async function loginAction(prevState, formData) {
             success: false,
             message: "An error occurred during login. Please try again later.",
         };
-    } finally {
-        return redirect("/");
     }
+
+    return redirect("/");
 }

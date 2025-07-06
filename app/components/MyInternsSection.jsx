@@ -1,32 +1,35 @@
 "use client";
-import Link from "next/link";
 import React, { useState } from "react";
 import JobCard from "./JobCard";
 
-export default function MyInternsSection({ jobs }) {
+export default function MyInternsSection({
+    jobs,
+    tabs = ["ongoing", "finished"],
+}) {
     const [filter, changeFilter] = useState(null);
 
     return (
         <div className="interns-first-content">
-            <div className="tabs">
-                <button
-                    className={filter === null ? "active" : ""}
-                    onClick={() => changeFilter(null)}
-                >
-                    All
-                </button>
-                <button
-                    className={filter === "ongoing" ? "active" : ""}
-                    onClick={() => changeFilter("ongoing")}
-                >
-                    Ongoing
-                </button>
-                <button
-                    className={filter === "finished" ? "active" : ""}
-                    onClick={() => changeFilter("finished")}
-                >
-                    Finished
-                </button>
+            <div className="head-title">
+                <div className="tabs">
+                    <button
+                        className={filter === null ? "active" : ""}
+                        onClick={() => changeFilter(null)}
+                    >
+                        All
+                    </button>
+                    {tabs.map((tab) => (
+                        <button
+                            className={filter === tab ? "active" : ""}
+                            onClick={() => changeFilter(tab)}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                </div>
+                <div className="buttons">
+                    <button>Add New Intern</button>
+                </div>
             </div>
             <div className="interns-cards">
                 {jobs

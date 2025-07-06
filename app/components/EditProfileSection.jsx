@@ -15,7 +15,7 @@ export default function EditProfileSection({ user }) {
     const [showEditModal, changeShowEditModal] = useState(false);
     const [showPassowrdModal, changeShowPasswordModal] = useState(false);
     const onEditClicked = useCallback(async () => {
-        await fetch("https://trainlink.fly.dev/api/users/" + user._id, {
+        await fetch("https://trainlink.fly.dev/api/users/" + user.id, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -107,14 +107,28 @@ export default function EditProfileSection({ user }) {
                 className="edit-form-modal"
                 onClose={() => changeShowEditModal(!showEditModal)}
             >
-                <div className="student-name">
-                    <h3>Student Name</h3>
-                    <input type="text" value={user.fullName} readOnly />
+                <div
+                    className="student-name"
+                    style={user.role !== "Student" ? { width: "100%" } : null}
+                >
+                    <h3>{user.role} Name</h3>
+                    <input
+                        type="text"
+                        value={user.fullName}
+                        style={
+                            user.role !== "Student" ? { width: "100%" } : null
+                        }
+                        readOnly
+                    />
                 </div>
-                <div className="student-id">
-                    <h3>Student ID</h3>
-                    <input type="text" value={user.studentId} readOnly />
-                </div>
+                {user.role === "Student" ? (
+                    <div className="student-id">
+                        <h3>Student ID</h3>
+                        <input type="text" value={user.studentId} readOnly />
+                    </div>
+                ) : (
+                    ""
+                )}
                 <div className="email">
                     <h3>Email</h3>
                     <input
@@ -135,16 +149,20 @@ export default function EditProfileSection({ user }) {
                         value={phoneNumber}
                     />
                 </div>
-                <div className="skills">
-                    <h3>Skills / Interests</h3>
-                    <textarea
-                        name="skills"
-                        onChange={({ target: { value } }) => {
-                            setSkills(value);
-                        }}
-                        value={skills}
-                    />
-                </div>
+                {user.role === "Student" ? (
+                    <div className="skills">
+                        <h3>Skills / Interests</h3>
+                        <textarea
+                            name="skills"
+                            onChange={({ target: { value } }) => {
+                                setSkills(value);
+                            }}
+                            value={skills}
+                        />
+                    </div>
+                ) : (
+                    ""
+                )}
                 <button className="submet" onClick={onEditClicked}>
                     Edit Profile
                 </button>{" "}

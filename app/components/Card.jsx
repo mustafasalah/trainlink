@@ -2,7 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-export default function Card({ url, thumbnailUrl, title, description }) {
+export default function Card({
+    url,
+    thumbnailUrl,
+    title,
+    description,
+    editable = false,
+}) {
     return (
         <div className="card">
             <div className="card-img">
@@ -16,6 +22,7 @@ export default function Card({ url, thumbnailUrl, title, description }) {
                 <Link className="btn-card" href={url}>
                     View details <i className="icon-chevron-right"></i>
                 </Link>
+                {editable ? <button className="remove-btn">Remove</button> : ""}
             </div>
         </div>
     );

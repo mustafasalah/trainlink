@@ -1,8 +1,6 @@
 "use client";
 
-import { loginAction } from "@/app/actions/loginAction";
-import { getAuthUser } from "@/app/auth";
-import { useRouter } from "next/navigation";
+import { loginAction } from "@/app/actions/authActions";
 import React, { useActionState } from "react";
 
 export default function page() {

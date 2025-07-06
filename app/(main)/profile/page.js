@@ -2,15 +2,45 @@ import Image from "next/image";
 import React from "react";
 import Certification from "../../components/Certification";
 import EditProfileSection from "../../components/EditProfileSection";
+import { getAuthUser } from "@/app/auth";
+import CompanyProfile from "@/app/components/CompanyProfile";
 
 export const dynamic = "force-dynamic";
 
 export default async function page({ params }) {
-    const userId = "68393e573ccf07820a5e409e"; //await params.id;
-    const userData = await fetch(
-        `https://trainlink.fly.dev/api/users/${userId}`
-    );
-    const user = await userData.json();
+    // const userId = "68393e573ccf07820a5e409e"; //await params.id;
+    // const userData = await fetch(
+    //     `https://trainlink.fly.dev/api/users/${userId}`
+    // );
+    const user = await getAuthUser();
+
+    if (user.role === "Company") {
+        const companyId = user.companyId;
+        const companyData = await fetch(
+            `https://trainlink.fly.dev/api/companies/${companyId}`
+        );
+        const company = await companyData.json();
+
+        const JobData = await fetch(
+            `https://trainlink.fly.dev/api/jobs?companyId=${companyId}`,
+            {
+                next: { tags: ["jobs"] },
+            }
+        );
+        const jobs = await JobData.json();
+
+        return (
+            <>
+                <div className="head-title">
+                    <h3>My Profile</h3>
+                    <div className="buttons">
+                        <button className="">Edit Profile</button>
+                    </div>
+                </div>
+                <CompanyProfile company={company} jobs={jobs} />
+            </>
+        );
+    }
 
     return (
         <div className="content">
@@ -38,69 +68,92 @@ export default async function page({ params }) {
                                 <i className="icon-circle-user-round"></i>Full
                                 Name: {user.fullName}
                             </li>
-                            <li>
-                                <i className="icon-fingerprint"></i>Student ID:
-                                {user.studentId}
-                            </li>
-                            <li>
-                                <i className="icon-mail"></i>Email Address:
-                                {user.email}
-                            </li>
-                            <li>
-                                <i className="icon-phone"></i>Phone Number:{" "}
-                                {user.phoneNumber}
-                            </li>
-                        </ul>
-                    </div>
-                    <div className="academic-details">
-                        <h3>Academic Details</h3>
-                        <ul>
-                            {user.academic?.department ? (
+                            {user.studentId ? (
                                 <li>
-                                    Department/Major: {user.academic.department}
+                                    <i className="icon-fingerprint"></i>Student
+                                    ID:
+                                    {user.studentId}
                                 </li>
                             ) : (
                                 ""
                             )}
-                            {user.academic?.college ? (
+                            {user.email ? (
                                 <li>
-                                    Faculty/College: {user.academic.college}
+                                    <i className="icon-mail"></i>Email Address:
+                                    {user.email}
                                 </li>
                             ) : (
                                 ""
                             )}
-                            {user.academic?.year ? (
+                            {user.phoneNumber ? (
                                 <li>
-                                    Year of Study/Graduation Year:{" "}
-                                    {user.academic.year}
-                                </li>
-                            ) : (
-                                ""
-                            )}
-                            {user.academic?.gpa ? (
-                                <li>Cumulative GPA: {user.academic.gpa}</li>
-                            ) : (
-                                ""
-                            )}
-                            {user.academic?.skills ? (
-                                <li>
-                                    Relevant Skills/Interests:{" "}
-                                    {user.academic.skills}
+                                    <i className="icon-phone"></i>Phone Number:{" "}
+                                    {user.phoneNumber}
                                 </li>
                             ) : (
                                 ""
                             )}
                         </ul>
                     </div>
-                    <div className="my-certification">
-                        <h3>My Certifications</h3>
-                        {user.certifications.map((certification) => (
-                            <Certification
-                                key={certification.title}
-                                info={certification}
-                            />
-                        ))}
-                    </div>
+                    {user.role === "Student" ? (
+                        <>
+                            <div className="academic-details">
+                                <h3>Academic Details</h3>
+                                <ul>
+                                    {user.academic?.department ? (
+                                        <li>
+                                            Department/Major:{" "}
+                                            {user.academic.department}
+                                        </li>
+                                    ) : (
+                                        ""
+                                    )}
+                                    {user.academic?.college ? (
+                                        <li>
+                                            Faculty/College:{" "}
+                                            {user.academic.college}
+                                        </li>
+                                    ) : (
+                                        ""
+                                    )}
+                                    {user.academic?.year ? (
+                                        <li>
+                                            Year of Study/Graduation Year:{" "}
+                                            {user.academic.year}
+                                        </li>
+                                    ) : (
+                                        ""
+                                    )}
+                                    {user.academic?.gpa ? (
+                                        <li>
+                                            Cumulative GPA: {user.academic.gpa}
+                                        </li>
+                                    ) : (
+                                        ""
+                                    )}
+                                    {user.academic?.skills ? (
+                                        <li>
+                                            Relevant Skills/Interests:{" "}
+                                            {user.academic.skills}
+                                        </li>
+                                    ) : (
+                                        ""
+                                    )}
+                                </ul>
+                            </div>
+                            <div className="my-certification">
+                                <h3>My Certifications</h3>
+                                {user.certifications.map((certification) => (
+                                    <Certification
+                                        key={certification.title}
+                                        info={certification}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        ""
+                    )}
                 </div>
             </div>
         </div>

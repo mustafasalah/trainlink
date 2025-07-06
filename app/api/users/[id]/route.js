@@ -1,5 +1,5 @@
 import connectDB from "@/app/DBconnection";
-import User from "@/app/models/Users";
+import User from "@/app/models/User";
 import { revalidatePath } from "next/cache";
 
 export async function GET(request, { params }) {
@@ -37,14 +37,24 @@ export async function POST(request, { params }) {
     const userId = (await params).id;
     const user = await User.findOne({ _id: userId });
 
-    await User.updateOne(
-        { _id: userId },
-        {
-            email: req.email,
-            phoneNumber: req.phoneNumber,
-            academic: { ...user.academic._doc, skills: req.skills },
-        }
-    );
+    if (user.role === "Student") {
+        await User.updateOne(
+            { _id: userId },
+            {
+                email: req.email,
+                phoneNumber: req.phoneNumber,
+                academic: { ...user.academic._doc, skills: req.skills },
+            }
+        );
+    } else {
+        await User.updateOne(
+            { _id: userId },
+            {
+                email: req.email,
+                phoneNumber: req.phoneNumber,
+            }
+        );
+    }
 
     revalidatePath("/profile", "page");
 }

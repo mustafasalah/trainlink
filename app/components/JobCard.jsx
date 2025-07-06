@@ -13,11 +13,11 @@ export default function JobCard({ intern, hideCompanyName = false }) {
                     width={280}
                     height={120}
                 />
-                {intern.status ? (
+                {/* {intern.status ? (
                     <span id={intern.status}>{intern.status}</span>
                 ) : (
                     ""
-                )}
+                )} */}
                 <p>{intern.title}</p>
             </div>
             <div className="card-info">

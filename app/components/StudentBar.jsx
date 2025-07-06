@@ -4,24 +4,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import useLoggedUser from "../hooks/useLoggedUser";
 
 export default function StudentBar() {
     const pathname = usePathname();
+    const loggedUser = useLoggedUser();
 
     return (
         <div className="student-bar">
             <div className="profile">
                 <Image
-                    src="/img/rasha profile.png"
+                    src={loggedUser.profileImage}
                     alt=""
                     width={70}
                     height={70}
                 />
-                <h4>Rasha Salah</h4>
-                <span>Information Technology</span>
+                <h4>{loggedUser.fullName}</h4>
+                <span>{loggedUser.specialization}</span>
                 <p>
                     {" "}
-                    UI/UX <span>Trainee</span>
+                    <span>{loggedUser.role} Account</span>
                 </p>
             </div>
             <div className="settings">
@@ -55,36 +57,24 @@ export default function StudentBar() {
                     </li>
                 </ul>
             </div>
-            <div className="certificate">
-                <p>My Certificate</p>
-                <div className="certifi-bord">
-                    <Image
-                        src="/img/certificate-quality-award-education-medal-svgrepo-com.svg"
-                        alt=""
-                        width={50}
-                        height={50}
-                    />
-                    <p>UX Research</p>
+            {loggedUser.role === "Student" ? (
+                <div className="certificate">
+                    <p>My Certificate</p>
+                    {loggedUser.certifications.map(({ title }) => (
+                        <div key={title} className="certifi-bord">
+                            <Image
+                                src="/img/certificate-quality-award-education-medal-svgrepo-com.svg"
+                                alt=""
+                                width={50}
+                                height={50}
+                            />
+                            <p>{title}</p>
+                        </div>
+                    ))}
                 </div>
-                <div className="certifi-bord">
-                    <Image
-                        src="/img/certificate-quality-award-education-medal-svgrepo-com.svg"
-                        alt=""
-                        width={50}
-                        height={50}
-                    />
-                    <p>Build Wireframes</p>
-                </div>
-                <div className="certifi-bord">
-                    <Image
-                        src="/img/certificate-quality-award-education-medal-svgrepo-com.svg"
-                        alt=""
-                        width={50}
-                        height={50}
-                    />
-                    <p>Foundations of UX</p>
-                </div>
-            </div>
+            ) : (
+                ""
+            )}
         </div>
     );
 }

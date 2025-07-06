@@ -65,13 +65,13 @@ const userSchema = new mongoose.Schema(
         },
         specialization: {
             type: String,
-            required: true,
             trim: true,
         },
         studentId: {
             type: String,
-            required: true,
-            unique: true, // Student ID is unique for each user
+            required: false,
+            unique: true,
+            sparse: true,
             trim: true,
         },
         about: {
@@ -99,7 +99,7 @@ const userSchema = new mongoose.Schema(
         },
         phoneNumber: {
             type: String,
-            required: false, // Phone number might be optional
+            required: false,
             trim: true,
         },
         academic: {

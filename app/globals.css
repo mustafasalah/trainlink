@@ -400,6 +400,20 @@ ul {
     justify-content: center;
     width: 100%;
 }
+
+.main-home .content .companies-cards .card .footer-card .remove-btn {
+    color: #ed2d2d;
+    background-color: transparent;
+    padding: 10px 0;
+    display: flex;
+    font-weight: 500;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+}
 /********************************Applications Page********************************/
 .main-home .content .applications {
     margin: 20px 0;
@@ -1456,4 +1470,21 @@ ul {
 
 .forum-section .topic-info span i {
     color: #ec2c2c;
+}
+/*----------- Company Profile Head Style --------------*/
+
+.head-title {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.head-title button {
+    border-radius: 4px;
+    border: none;
+    background-color: #1c64f2;
+    padding: 8px 10px;
+    color: #fff;
+    cursor: pointer;
+    font-family: Montserrat;
 }
