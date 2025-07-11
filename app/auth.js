@@ -51,7 +51,7 @@ export async function setAuthCookie(token, maxAgeSeconds = 60 * 60 * 24) {
         name: JWT_COOKIE_NAME,
         value: token,
         httpOnly: true, // Crucial for security: prevents client-side JS access
-        // secure: process.env.NODE_ENV === "production", // Use secure cookies in production (HTTPS)
+        secure: process.env.NODE_ENV === "production", // Use secure cookies in production (HTTPS)
         sameSite: "Lax", // Protects against CSRF attacks
         maxAge: maxAgeSeconds, // Cookie expiration time
         path: "/", // Cookie is valid for all paths

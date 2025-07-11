@@ -1,5 +1,4 @@
 import React from "react";
-import Card from "../../components/Card";
 import CompaniesView from "@/app/components/CompaniesView";
 
 export const dynamic = "force-dynamic";

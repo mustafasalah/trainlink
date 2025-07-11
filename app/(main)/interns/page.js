@@ -16,15 +16,16 @@ export default async function page() {
         <div className="content">
             <div className="interns">
                 <MyInternsSection jobs={takedJobs} />
+
                 <div className="available-interns">
-                    <h3>
+                    {/* <h3>
                         Available Interns<span>({availableJobs.length})</span>
                     </h3>
                     <div className="cards">
                         {availableJobs.map((job) => (
                             <JobCard key={job._id} intern={job} />
                         ))}
-                    </div>
+                    </div> */}
                     {/* <div className="view-more">
                         <button>View More</button>
                         <p>(3 of 12 Training Opportunities)</p>
