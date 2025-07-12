@@ -1,18 +1,29 @@
 "use server";
 
-import { cookies } from "next/headers"; // Next.js utility to access cookies on the server
+import { cookies, headers } from "next/headers"; // Next.js utility to access cookies on the server
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "JKJFL958*^JJ%4LK"; // Must match the secret used for signing
-const JWT_COOKIE_NAME = "authToken"; // Must match the cookie name used on the client side (utils/auth.js)
+const JWT_SECRET = process.env.JWT_SECRET || "JKJFL958*^JJ%4LK";
+const JWT_COOKIE_NAME = "authToken";
+const JWT_HEADER_NAME = "auth-token";
 
 /**
  * Verifies the JWT token stored in an HttpOnly cookie on the server side.
  * @returns {object | null} The decoded JWT payload if valid, otherwise null.
  */
-export async function verifyAuthToken() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(JWT_COOKIE_NAME)?.value;
+export async function verifyAuthToken(isAPI = false) {
+    let token = null;
+
+    if (isAPI) {
+        // Get the headers from the incoming request
+        const requestHeaders = await headers();
+
+        // Retrieve the token from the 'auth-token' header
+        token = requestHeaders.get(JWT_HEADER_NAME);
+    } else {
+        const cookieStore = await cookies();
+        token = cookieStore.get(JWT_COOKIE_NAME)?.value;
+    }
 
     if (!token) {
         return null;
@@ -25,7 +36,7 @@ export async function verifyAuthToken() {
     } catch (error) {
         console.error("Server-side JWT verification failed:", error);
         // Optionally, clear the invalid cookie here if verification fails
-        cookieStore.delete(JWT_COOKIE_NAME);
+        if (!isAPI) cookieStore.delete(JWT_COOKIE_NAME);
         return null;
     }
 }
@@ -35,8 +46,13 @@ export async function verifyAuthToken() {
  * This is a convenience function that calls verifyAuthToken.
  * @returns {object | null} The authenticated user's data (payload) or null if not authenticated.
  */
-export async function getAuthUser() {
-    return await verifyAuthToken();
+export async function getAuthUser(isAPI) {
+    return await verifyAuthToken(isAPI);
+}
+
+export async function getAuthToken() {
+    const cookieStore = await cookies();
+    return cookieStore.get(JWT_COOKIE_NAME)?.value;
 }
 
 /**

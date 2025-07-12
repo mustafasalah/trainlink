@@ -53,7 +53,7 @@ export default function CompanyProfile({ company, jobs }) {
                                     {jobs.map((job) => (
                                         <JobCard
                                             key={job._id}
-                                            intern={job}
+                                            job={job}
                                             hideCompanyName
                                         />
                                     ))}

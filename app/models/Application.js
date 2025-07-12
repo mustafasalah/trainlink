@@ -2,26 +2,46 @@ import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema(
     {
-        internId: {
-            type: String,
+        /**
+         * Reference to the Student User who submitted this application.
+         */
+        student: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
             required: true,
-            unique: false, // Set to true if each internId should only have one application
         },
-        title: {
-            type: String,
+        /**
+         * Reference to the specific JobPosting this application is for.
+         */
+        job: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Job",
             required: true,
-            trim: true, // Removes whitespace from both ends of a string
         },
+        /**
+         * The date when the application was submitted by the student.
+         */
+        applicationDate: {
+            type: Date,
+            default: Date.now,
+            required: true,
+        },
+        /**
+         * The current status of this application in the recruitment pipeline.
+         */
         status: {
             type: String,
+            enum: ["Pending", "Accepted", "Rejected"],
+            default: "Pending",
             required: true,
-            enum: ["pending", "approved", "rejected", "in review"], // Example of allowed values
-            default: "pending", // Set a default status for new applications
         },
-        datetime: {
-            type: Date,
-            required: true,
-            default: Date.now, // Sets the default to the current date/time when created
+        /**
+         * Optional field for any notes or comments from the company or admin regarding this application.
+         */
+        notes: {
+            type: String,
+            required: false,
+            trim: true,
         },
     },
     {

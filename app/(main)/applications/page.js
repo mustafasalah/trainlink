@@ -1,11 +1,13 @@
 import React from "react";
 import ApplicationRow from "../../components/ApplicationRow";
+import { getAuthUser } from "@/app/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function Applications() {
-    const data = await fetch("https://trainlink.fly.dev/api/applications");
+    const data = await fetch("http://localhost:3000/api/applications");
     const applications = await data.json();
+    const loggedUser = await getAuthUser();
 
     return (
         <div className="content">
@@ -54,7 +56,17 @@ export default async function Applications() {
                     <table>
                         <thead>
                             <tr>
+                                {/^(Admin|Company)$/.test(loggedUser.role) ? (
+                                    <td>Student</td>
+                                ) : (
+                                    ""
+                                )}
                                 <td>Opportunity</td>
+                                {loggedUser.role === "Admin" ? (
+                                    <td>Company</td>
+                                ) : (
+                                    ""
+                                )}
                                 <td>Status</td>
                                 <td>Application Date</td>
                                 <td>Action</td>

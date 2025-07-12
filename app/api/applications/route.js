@@ -1,13 +1,19 @@
 import connectDB from "@/app/DBconnection";
 import Application from "@/app/models/Application";
 import Job from "@/app/models/Job";
+import User from "@/app/models/User";
 import { revalidateTag } from "next/cache";
 
 export async function GET(request) {
     // Make a database connection
     await connectDB();
 
-    const applications = await Application.find();
+    const applications = await Application.find()
+        .populate({
+            path: "job",
+            model: "Job",
+        })
+        .populate({ path: "student", model: "User" });
 
     return new Response(JSON.stringify(applications), {
         status: 200,

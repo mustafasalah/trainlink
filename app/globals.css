@@ -685,12 +685,17 @@ ul {
     padding: 2px 0px;
     width: 80px;
 }
-.main-home .content .card .card-img span#ongoing {
+.main-home .content .card .card-img span.ongoing {
     background-color: #ffe900;
     color: #000;
 }
-.main-home .content .card .card-img span#finished {
+.main-home .content .card .card-img span.finished,
+.main-home .content .card .card-img span.inactive {
     background-color: #676767;
+    color: #fff;
+}
+.main-home .content .card .card-img span.active {
+    background-color: #00d12d;
     color: #fff;
 }
 .main-home .content .card .card-img p {

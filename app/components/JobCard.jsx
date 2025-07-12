@@ -1,50 +1,60 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { format } from "timeago.js";
+import useLoggedUser from "../hooks/useLoggedUser";
 
-export default function JobCard({ intern, hideCompanyName = false }) {
+export default function JobCard({
+    job,
+    InternStatus = null,
+    hideCompanyName = false,
+}) {
+    const loggedUser = useLoggedUser();
+
     return (
         <div className="card">
             <div className="card-img">
-                <Image
-                    src={intern.thumbnailUrl}
-                    alt=""
-                    width={280}
-                    height={120}
-                />
-                {/* {intern.status ? (
-                    <span id={intern.status}>{intern.status}</span>
+                <Image src={job.thumbnailUrl} alt="" width={280} height={120} />
+                {InternStatus ? (
+                    <span className={InternStatus.toLowerCase()}>
+                        {InternStatus}
+                    </span>
+                ) : loggedUser.role !== "Student" ? (
+                    <span className={job.status.toLowerCase()}>
+                        {job.status}
+                    </span>
                 ) : (
                     ""
-                )} */}
-                <p>{intern.title}</p>
+                )}
+                <p>{job.title}</p>
             </div>
             <div className="card-info">
-                {hideCompanyName ? "" : <p>{intern.companyName}</p>}
+                {hideCompanyName ? "" : <p>{job.companyName}</p>}
                 <span>
                     <i className="icon-map-pin"></i>
-                    {intern.location}
+                    {job.location}
                 </span>
                 <span>
                     <i className="icon-calendar"></i>
-                    {intern.period}
+                    {job.period}
                 </span>
                 <span>
                     <i className="icon-clock"></i>
-                    {intern.workTime}
+                    {job.workTime}
                 </span>
                 <span>
                     <i className="icon-users"></i>
-                    {intern.appliedCounter} student applied
+                    {job.appliedCounter} student applied
                 </span>
             </div>
             <div className="footer-card">
                 <span>
                     <i className="icon-history"></i>
-                    {format(intern.datetime)}
+                    {format(job.datetime)}
                 </span>
-                <Link href={`/interns/${intern._id}`}>
+                <Link href={`/jobs/${job._id}`}>
                     View details <i className="icon-chevron-right"></i>
                 </Link>
             </div>

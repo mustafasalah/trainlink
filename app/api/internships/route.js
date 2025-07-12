@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/app/auth";
+import { getAuthUser, verifyAuthToken } from "@/app/auth";
 import connectDB from "@/app/DBconnection";
 import Internship from "@/app/models/Internship";
 import Application from "@/app/models/Application";
@@ -7,9 +7,12 @@ import Job from "@/app/models/Job";
 import Company from "@/app/models/Company";
 
 export async function GET(request) {
-    const loggedUser = await getAuthUser();
+    let loggedUser = await getAuthUser(true);
 
-    if (!loggedUser) return new Response("Not Authorized.", { status: 401 });
+    // login using cookie if there are no auth-token in headers
+    if (!loggedUser) loggedUser = await getAuthUser();
+
+    if (!loggedUser) return new Response("[]", { status: 401 });
 
     // Make a database connection
     await connectDB();
@@ -25,10 +28,6 @@ export async function GET(request) {
             populate: {
                 path: "job",
                 model: "Job",
-                populate: {
-                    path: "company",
-                    model: "Company",
-                },
             },
         })
         .populate({

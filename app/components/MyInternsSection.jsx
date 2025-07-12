@@ -5,53 +5,60 @@ import JobCard from "./JobCard";
 import useLoggedUser from "../hooks/useLoggedUser";
 
 export default function MyInternsSection({
-    jobs,
-    tabs = ["ongoing", "finished"],
+    internships,
+    tabs = ["Ongoing", "Finished"],
 }) {
     const [filter, changeFilter] = useState(null);
     const loggedUser = useLoggedUser();
 
     return (
         <div className="interns-first-content">
-            {loggedUser.role === "Company" ? (
-                <div className="head-title">
-                    <div className="tabs">
+            <div className="head-title">
+                <div className="tabs">
+                    <button
+                        className={filter === null ? "active" : ""}
+                        onClick={() => changeFilter(null)}
+                    >
+                        All
+                    </button>
+                    {tabs.map((tab) => (
                         <button
-                            className={filter === null ? "active" : ""}
-                            onClick={() => changeFilter(null)}
+                            key={tab}
+                            className={filter === tab ? "active" : ""}
+                            onClick={() => changeFilter(tab)}
                         >
-                            All
+                            {tab}
                         </button>
-                        {tabs.map((tab) => (
-                            <button
-                                className={filter === tab ? "active" : ""}
-                                onClick={() => changeFilter(tab)}
-                            >
-                                {tab}
-                            </button>
-                        ))}
-                    </div>
-                    {loggedUser.role === "Company" ? (
-                        <div className="buttons">
-                            <button>Add New Intern</button>
-                        </div>
-                    ) : (
-                        ""
-                    )}
-                </div>
-            ) : (
-                <h3>
-                    My Interns<span>({jobs.length})</span>
-                </h3>
-            )}
-            <div className="interns-cards">
-                {jobs
-                    .filter((job) =>
-                        filter === null ? true : job.status === filter
-                    )
-                    .map((job) => (
-                        <JobCard key={job._id} intern={job} />
                     ))}
+                </div>
+                {loggedUser.role === "Company" ? (
+                    <div className="buttons">
+                        <button>Add New Intern</button>
+                    </div>
+                ) : (
+                    ""
+                )}
+            </div>
+            <div className="interns-cards">
+                {loggedUser.role === "Student"
+                    ? internships
+                          .filter(({ status }) =>
+                              filter === null ? true : status === filter
+                          )
+                          .map(({ application: { job }, status }) => (
+                              <JobCard
+                                  key={job._id}
+                                  job={job}
+                                  InternStatus={status}
+                              />
+                          ))
+                    : internships
+                          .filter(({ status }) =>
+                              filter === null ? true : status === filter
+                          )
+                          .map((intern) => (
+                              <JobCard key={intern._id} job={intern} />
+                          ))}
             </div>
         </div>
     );
