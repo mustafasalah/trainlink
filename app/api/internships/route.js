@@ -9,7 +9,7 @@ import Company from "@/app/models/Company";
 export async function GET(request) {
     const loggedUser = await getAuthUser();
 
-    if (!loggedUser) return new Response("Not Authorized.", 401);
+    if (!loggedUser) return new Response("Not Authorized.", { status: 401 });
 
     // Make a database connection
     await connectDB();
