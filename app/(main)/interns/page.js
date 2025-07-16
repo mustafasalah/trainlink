@@ -15,7 +15,7 @@ export default async function page() {
             next: { tags: ["internships"] },
         }
     );
-    const jobsData = await fetch("https://trainlink.fly.dev/api/jobs", {
+    const jobsData = await fetch("http://localhost:3000/api/jobs", {
         next: { tags: ["jobs"] },
     });
     const internships = await internshipsData.json();

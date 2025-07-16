@@ -1,6 +1,6 @@
 import Image from "next/image";
 import JobCard from "../components/JobCard";
-import { getAuthUser } from "../auth";
+import { getAuthToken, getAuthUser } from "../auth";
 import MyInternsSection from "../components/MyInternsSection";
 import CompaniesView from "../components/CompaniesView";
 
@@ -10,7 +10,7 @@ export default async function Home() {
     const loggedUser = await getAuthUser();
 
     if (loggedUser.role === "ERO") {
-        const data = await fetch("https://trainlink.fly.dev/api/companies");
+        const data = await fetch("http://localhost:3000/api/companies");
         const companies = await data.json();
         return (
             <div className="content">
@@ -19,23 +19,30 @@ export default async function Home() {
         );
     }
 
-    const data = await fetch("https://trainlink.fly.dev/api/jobs", {
-        next: { tags: ["jobs"] },
-    });
-    const jobs = await data.json();
-
     if (loggedUser.role === "Company") {
+        const data = await fetch("http://localhost:3000/api/jobs", {
+            headers: {
+                "auth-token": await getAuthToken(),
+            },
+            next: { tags: ["jobs"] },
+        });
+        const companyJobs = await data.json();
         return (
             <div className="content">
                 <div className="interns">
                     <MyInternsSection
-                        internships={jobs}
+                        internships={companyJobs}
                         tabs={["active", "inactive"]}
                     />
                 </div>
             </div>
         );
     }
+
+    const data = await fetch("http://localhost:3000/api/jobs", {
+        next: { tags: ["jobs"] },
+    });
+    const jobs = await data.json();
 
     return (
         <div className="content">

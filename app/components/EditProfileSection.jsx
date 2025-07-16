@@ -15,7 +15,7 @@ export default function EditProfileSection({ user }) {
     const [showEditModal, changeShowEditModal] = useState(false);
     const [showPassowrdModal, changeShowPasswordModal] = useState(false);
     const onEditClicked = useCallback(async () => {
-        await fetch("https://trainlink.fly.dev/api/users/" + user.id, {
+        await fetch("http://localhost:3000/api/users/" + user.id, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

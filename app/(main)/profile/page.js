@@ -10,19 +10,19 @@ export const dynamic = "force-dynamic";
 export default async function page({ params }) {
     // const userId = "68393e573ccf07820a5e409e"; //await params.id;
     // const userData = await fetch(
-    //     `https://trainlink.fly.dev/api/users/${userId}`
+    //     `http://localhost:3000/api/users/${userId}`
     // );
     const user = await getAuthUser();
 
     if (user.role === "Company") {
         const companyId = user.companyId;
         const companyData = await fetch(
-            `https://trainlink.fly.dev/api/companies/${companyId}`
+            `http://localhost:3000/api/companies/${companyId}`
         );
         const company = await companyData.json();
 
         const JobData = await fetch(
-            `https://trainlink.fly.dev/api/jobs?companyId=${companyId}`,
+            `http://localhost:3000/api/jobs?companyId=${companyId}`,
             {
                 next: { tags: ["jobs"] },
             }

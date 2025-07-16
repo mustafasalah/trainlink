@@ -9,9 +9,6 @@ import Company from "@/app/models/Company";
 export async function GET(request) {
     let loggedUser = await getAuthUser(true);
 
-    // login using cookie if there are no auth-token in headers
-    if (!loggedUser) loggedUser = await getAuthUser();
-
     if (!loggedUser) return new Response("[]", { status: 401 });
 
     // Make a database connection

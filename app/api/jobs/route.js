@@ -1,12 +1,17 @@
+import { getAuthUser } from "@/app/auth";
 import connectDB from "@/app/DBconnection";
 import Job from "@/app/models/Job";
 
 export async function GET(request) {
+    let loggedUser = await getAuthUser(true);
+
+    if (!loggedUser) return new Response("[]", { status: 401 });
+
     // Make a database connection
     await connectDB();
 
     const searchParams = request.nextUrl.searchParams;
-    const companyId = searchParams.get("companyId");
+    let companyId = searchParams.get("companyId") ?? loggedUser?.companyId;
 
     let data = [];
     if (companyId) {

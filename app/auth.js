@@ -20,7 +20,10 @@ export async function verifyAuthToken(isAPI = false) {
 
         // Retrieve the token from the 'auth-token' header
         token = requestHeaders.get(JWT_HEADER_NAME);
-    } else {
+    }
+
+    // use cookie if API is false or API is true but there are no auth token header
+    if (!isAPI || !token) {
         const cookieStore = await cookies();
         token = cookieStore.get(JWT_COOKIE_NAME)?.value;
     }
@@ -81,4 +84,15 @@ export async function setAuthCookie(token, maxAgeSeconds = 60 * 60 * 24) {
 export async function clearAuthCookie() {
     const cookieStore = await cookies();
     cookieStore.delete(JWT_COOKIE_NAME);
+}
+
+export async function getLoggedUser() {
+    let loggedUser = await getAuthUser(true);
+
+    // login using cookie if there are no auth-token in headers
+    if (!loggedUser) loggedUser = await getAuthUser();
+
+    if (!loggedUser) throw new Response("[]", { status: 401 });
+
+    return loggedUser;
 }

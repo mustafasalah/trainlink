@@ -9,7 +9,7 @@ export default function ApplySection({ job, company }) {
     const router = useRouter();
 
     const onApplyClicked = useCallback(async () => {
-        await fetch("https://trainlink.fly.dev/api/applications", {
+        await fetch("http://localhost:3000/api/applications", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

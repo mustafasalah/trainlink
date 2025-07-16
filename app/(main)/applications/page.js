@@ -1,11 +1,15 @@
 import React from "react";
 import ApplicationRow from "../../components/ApplicationRow";
-import { getAuthUser } from "@/app/auth";
+import { getAuthToken, getAuthUser } from "@/app/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function Applications() {
-    const data = await fetch("http://localhost:3000/api/applications");
+    const data = await fetch("http://localhost:3000/api/applications", {
+        headers: {
+            "auth-token": await getAuthToken(),
+        },
+    });
     const applications = await data.json();
     const loggedUser = await getAuthUser();
 

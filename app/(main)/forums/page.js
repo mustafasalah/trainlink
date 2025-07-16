@@ -2,7 +2,7 @@ import React from "react";
 import ForumSection from "../../components/ForumSection";
 
 export default async function Forums() {
-    // const data = await fetch("https://trainlink.fly.dev/api/applications");
+    // const data = await fetch("http://localhost:3000/api/applications");
     // const applications = await data.json();
 
     const generalTopics = [

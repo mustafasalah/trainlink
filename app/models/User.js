@@ -118,7 +118,7 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
         // Company-specific fields (example, for company role's main contact)
-        companyId: mongoose.Schema.Types.ObjectId, // Link to actual Company model
+        companyId: String, // Link to actual Company model
         companyName: String,
     },
     {
