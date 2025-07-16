@@ -1,6 +1,7 @@
 import connectDB from "@/app/DBconnection";
 import User from "@/app/models/User";
 import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
     // Make a database connection
@@ -57,4 +58,6 @@ export async function POST(request, { params }) {
     }
 
     revalidatePath("/profile", "page");
+
+    return NextResponse.json({ message: "Done!", status: 200 });
 }

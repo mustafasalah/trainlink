@@ -1,19 +1,18 @@
 import Image from "next/image";
 import React from "react";
-import Certification from "../../components/Certification";
-import EditProfileSection from "../../components/EditProfileSection";
 import { getAuthUser } from "@/app/auth";
+import EditProfileSection from "@/app/components/EditProfileSection";
 import CompanyProfile from "@/app/components/CompanyProfile";
+import Certification from "@/app/components/Certification";
 
 export const dynamic = "force-dynamic";
 
 export default async function page({ params }) {
-    const loggedUser = await getAuthUser();
-    const data = await fetch(
-        "http://localhost:3000/api/users/" + loggedUser.id
-    );
+    const userId = (await params).id;
+    const data = await fetch(`http://localhost:3000/api/users/${userId}`);
     const user = await data.json();
-    user.id = user._id;
+    const loggedUser = await getAuthUser();
+    const isSameLoggedUser = loggedUser.id === user._id;
 
     if (user.role === "Company") {
         const companyId = user.companyId;
@@ -34,9 +33,13 @@ export default async function page({ params }) {
             <>
                 <div className="head-title">
                     <h3>My Profile</h3>
-                    <div className="buttons">
-                        <button className="">Edit Profile</button>
-                    </div>
+                    {isSameLoggedUser ? (
+                        <div className="buttons">
+                            <button className="">Edit Profile</button>
+                        </div>
+                    ) : (
+                        ""
+                    )}
                 </div>
                 <CompanyProfile company={company} jobs={jobs} />
             </>
@@ -59,7 +62,7 @@ export default async function page({ params }) {
                             <p>{user.specialization}</p>
                         </div>
                     </div>
-                    <EditProfileSection user={user} />
+                    {isSameLoggedUser ? <EditProfileSection user={user} /> : ""}
                 </div>
                 <div className="student-profile-info">
                     <div className="basic-info">

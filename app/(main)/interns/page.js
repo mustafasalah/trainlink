@@ -16,6 +16,7 @@ export default async function page() {
         }
     );
     const jobsData = await fetch("http://localhost:3000/api/jobs", {
+        headers: { "auth-token": await getAuthToken() },
         next: { tags: ["jobs"] },
     });
     const internships = await internshipsData.json();
