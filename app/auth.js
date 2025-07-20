@@ -85,14 +85,3 @@ export async function clearAuthCookie() {
     const cookieStore = await cookies();
     cookieStore.delete(JWT_COOKIE_NAME);
 }
-
-export async function getLoggedUser() {
-    let loggedUser = await getAuthUser(true);
-
-    // login using cookie if there are no auth-token in headers
-    if (!loggedUser) loggedUser = await getAuthUser();
-
-    if (!loggedUser) throw new Response("[]", { status: 401 });
-
-    return loggedUser;
-}

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useState } from "react";
 import Modal from "./Modal";
+import { getAuthToken } from "../auth";
 
 export default function EditProfileSection({ user }) {
     const [email, setEmail] = useState(user.email);
@@ -25,10 +26,23 @@ export default function EditProfileSection({ user }) {
         alert("Your Profile Info has been updated successfully!");
         window.location.reload();
     }, [showEditModal, email, phoneNumber, skills]);
-    const onEditPasswordClicked = useCallback(
-        () => changeShowPasswordModal(!showPassowrdModal),
-        [showPassowrdModal]
-    );
+    const onEditPasswordClicked = useCallback(async () => {
+        const response = await fetch(
+            "http://localhost:3000/api/change-password",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "auth-token": await getAuthToken(),
+                },
+                body: JSON.stringify({ oldPass, newPass, confirmPass }),
+            }
+        );
+
+        alert(await response.text());
+        if (response.status === 200)
+            changeShowPasswordModal(!showPassowrdModal);
+    }, [showPassowrdModal, oldPass, newPass, confirmPass]);
 
     return (
         <>
@@ -36,13 +50,17 @@ export default function EditProfileSection({ user }) {
                 <button onClick={() => changeShowEditModal(!showEditModal)}>
                     Edit Profile
                 </button>{" "}
-                <button onClick={onEditPasswordClicked}>Change Password</button>
+                <button
+                    onClick={() => changeShowPasswordModal(!showPassowrdModal)}
+                >
+                    Change Password
+                </button>
             </div>
             <Modal
                 title="Change My Password"
                 show={showPassowrdModal}
                 className="password-form-modal"
-                onClose={onEditPasswordClicked}
+                onClose={() => changeShowPasswordModal(!showPassowrdModal)}
             >
                 <div className="old-pass">
                     <h3>Old Password</h3>
@@ -79,20 +97,21 @@ export default function EditProfileSection({ user }) {
                 <button
                     className="change"
                     onClick={() => {
-                        if (
-                            oldPass !== "" &&
-                            newPass !== "" &&
-                            confirmPass === newPass
-                        ) {
-                            alert(
-                                "Your password has been changed successfully!"
-                            );
-                            onEditPasswordClicked();
-                        } else {
-                            alert(
-                                "There is an error in the password you entered!"
-                            );
-                        }
+                        onEditPasswordClicked();
+                        // if (
+                        //     oldPass !== "" &&
+                        //     newPass !== "" &&
+                        //     confirmPass === newPass
+                        // ) {
+                        //     alert(
+                        //         "Your password has been changed successfully!"
+                        //     );
+                        //     onEditPasswordClicked();
+                        // } else {
+                        //     alert(
+                        //         "There is an error in the password you entered!"
+                        //     );
+                        // }
                     }}
                 >
                     Change

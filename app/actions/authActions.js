@@ -3,7 +3,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import connectDB from "../DBconnection";
-import { setAuthCookie } from "../auth";
+import { getAuthUser, setAuthCookie } from "../auth";
 import { redirect } from "next/navigation";
 
 const JWT_SECRET = process.env.JWT_SECRET || "JKJFL958*^JJ%4LK"; // USE A STRONG, RANDOM SECRET IN PRODUCTION!
