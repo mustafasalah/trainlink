@@ -40,6 +40,23 @@ const applicationSchema = new mongoose.Schema(
             default: false,
             required: true,
         },
+
+        /**
+         * URL or path to the student's uploaded Resume/CV file.
+         */
+        resumeUrl: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        /**
+         * URL or path to the student's uploaded Cover Letter file.
+         */
+        coverLetterUrl: {
+            type: String,
+            required: true,
+            trim: true,
+        },
         /**
          * Optional field for any notes or comments from the company or admin regarding this application.
          */

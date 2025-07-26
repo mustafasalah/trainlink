@@ -9,6 +9,7 @@ export default function ApplicationRow({
     job,
     student,
     applicationDate,
+    acceptedByAdmin,
     status,
 }) {
     const loggedUser = useLoggedUser();
@@ -28,16 +29,27 @@ export default function ApplicationRow({
                 <Link href={`/interns/${job._id}`}>{job.title}</Link>
             </td>
             {loggedUser.role === "Admin" ? (
-                <td>
-                    <Link href={`/companies/${job.companyId}`}>
-                        {job.companyName}
-                    </Link>
-                </td>
+                <>
+                    <td>
+                        <Link href={`/companies/${job.companyId}`}>
+                            {job.companyName}
+                        </Link>
+                    </td>
+                </>
             ) : (
                 ""
             )}
             <td>
-                <span id={status}>{status}</span>
+                <span id={status}>
+                    {status}{" "}
+                    <span style={{ color: acceptedByAdmin ? "green" : "red" }}>
+                        {loggedUser.role === "Admin"
+                            ? acceptedByAdmin
+                                ? "(Reviewed)"
+                                : "(Need Review)"
+                            : ""}
+                    </span>
+                </span>
             </td>
             <td>{applicationDate}</td>
             <td>

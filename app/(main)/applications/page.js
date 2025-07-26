@@ -67,7 +67,9 @@ export default async function Applications() {
                                 )}
                                 <td>Opportunity</td>
                                 {loggedUser.role === "Admin" ? (
-                                    <td>Company</td>
+                                    <>
+                                        <td>Company</td>
+                                    </>
                                 ) : (
                                     ""
                                 )}
