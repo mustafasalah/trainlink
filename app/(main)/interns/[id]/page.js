@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import ApplySection from "@/app/components/ApplySection";
+import { getAuthToken, getAuthUser } from "@/app/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export default async function InternDetails({ params }) {
         `http://localhost:3000/api/companies/${job.companyId}`
     );
     const company = await companyData.json();
+    const loggedUser = await getAuthUser();
 
     return (
         <div className="content">
@@ -113,7 +115,8 @@ export default async function InternDetails({ params }) {
                             ""
                         )}
                     </div>
-                    {job.status === null ? (
+                    {loggedUser.role === "Student" &&
+                    (await canJoinIntern(job._id)) ? (
                         <ApplySection job={job} company={company} />
                     ) : (
                         ""
@@ -123,3 +126,14 @@ export default async function InternDetails({ params }) {
         </div>
     );
 }
+
+const canJoinIntern = async (jobId) => {
+    const data = await fetch("http://localhost:3000/api/applications", {
+        headers: {
+            "auth-token": await getAuthToken(),
+        },
+    });
+    const applications = await data.json();
+
+    return applications.findIndex(({ job }) => job._id === jobId) === -1;
+};

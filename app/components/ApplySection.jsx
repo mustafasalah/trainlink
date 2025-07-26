@@ -3,10 +3,13 @@
 import React, { useCallback, useState } from "react";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
+import useLoggedUser from "../hooks/useLoggedUser";
 
 export default function ApplySection({ job, company }) {
     const [showApplyModal, changeShowApplyModal] = useState(false);
     const router = useRouter();
+
+    const loggedUser = useLoggedUser();
 
     const onApplyClicked = useCallback(async () => {
         await fetch("http://localhost:3000/api/applications", {
@@ -22,15 +25,22 @@ export default function ApplySection({ job, company }) {
     }, [job]);
 
     const [success, setSuccess] = useState(false);
+    const isRegistered = loggedUser.academic.registered;
+
+    console.log(isRegistered);
 
     return (
         <>
             <button
-                disabled={success}
-                style={success ? { backgroundColor: "gray" } : {}}
+                disabled={success || !isRegistered}
+                style={
+                    success || !isRegistered ? { backgroundColor: "gray" } : {}
+                }
                 onClick={() => changeShowApplyModal(!showApplyModal)}
             >
-                Apply Now
+                {isRegistered
+                    ? "Apply Now"
+                    : "Please register yourself in college first."}
             </button>
             <Modal
                 title="Application Form"

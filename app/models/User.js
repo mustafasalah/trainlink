@@ -47,6 +47,11 @@ const academicSchema = new mongoose.Schema(
             required: false,
             trim: true,
         },
+        registered: {
+            type: Boolean,
+            default: false,
+            required: true,
+        },
     },
     { _id: false }
 ); // Set _id to false if you don't need a separate _id for subdocuments

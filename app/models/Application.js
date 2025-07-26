@@ -35,6 +35,11 @@ const applicationSchema = new mongoose.Schema(
             default: "Pending",
             required: true,
         },
+        acceptedByAdmin: {
+            type: Boolean,
+            default: false,
+            required: true,
+        },
         /**
          * Optional field for any notes or comments from the company or admin regarding this application.
          */
