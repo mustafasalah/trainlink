@@ -12,7 +12,7 @@ export default function TopicItem({
     return (
         <li className="topic-item">
             <div>
-                <Link className="topic-title" href={`/forums/${id}`}>
+                <Link className="topic-title" href={`/forums/topics/${id}`}>
                     {title}
                 </Link>
                 <p className="topic-info">

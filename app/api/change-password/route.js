@@ -10,8 +10,6 @@ export async function POST(request) {
             status: 401,
         });
 
-    console.log(request);
-
     const data = await request.json();
     const oldPassword = data.oldPass;
     const newPassword = data.newPass;

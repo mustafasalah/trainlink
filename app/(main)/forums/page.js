@@ -1,5 +1,6 @@
 import React from "react";
 import ForumSection from "../../components/ForumSection";
+import CreateTopicModal from "@/app/components/CreateTopicModal";
 
 export default async function Forums() {
     // const data = await fetch("http://localhost:3000/api/applications");
@@ -60,42 +61,44 @@ export default async function Forums() {
     ];
 
     return (
-        <div className="content">
-            <div className="forums applications">
-                <h3>Forums</h3>
-                <div className="apps-search-form">
-                    <div className="app-search-status">
-                        <div className="search-box">
-                            <input
-                                type="search"
-                                name=""
-                                id=""
-                                placeholder="Search for specific topic"
-                            />
+        <>
+            <div className="content">
+                <div className="forums">
+                    <h3>Forums</h3>
+                    <div className="apps-search-form">
+                        <div className="app-search-status">
+                            <div className="search-box">
+                                <input
+                                    type="search"
+                                    name=""
+                                    id=""
+                                    placeholder="Search for specific topic"
+                                />
+                            </div>
+                        </div>
+                        <div className="items">
+                            <CreateTopicModal />
                         </div>
                     </div>
-                    <div className="items">
-                        <button className="">Create a New Topic</button>
-                    </div>
-                </div>
-                <div className="apps-form">
-                    <ForumSection
-                        title="General Discussion"
-                        description="A space for general discussion, announcements,
+                    <div className="apps-form">
+                        <ForumSection
+                            title="General Discussion"
+                            description="A space for general discussion, announcements,
                                 and platform feedback."
-                        topics={generalTopics}
-                    />
-                    <ForumSection
-                        title="Academic Support"
-                        description="Discuss study tips, ask for help with coursework, and share academic resources."
-                        topics={supportTopics}
-                    />
-                    {/* <div className="view-more">
+                            topics={generalTopics}
+                        />
+                        <ForumSection
+                            title="Academic Support"
+                            description="Discuss study tips, ask for help with coursework, and share academic resources."
+                            topics={supportTopics}
+                        />
+                        {/* <div className="view-more">
                         <button>View More</button>
                         <p>(2 of {applications.length} Applications)</p>
                     </div> */}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
