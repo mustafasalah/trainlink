@@ -45,6 +45,7 @@ export default function MyInternsSection({
                           .filter(({ status }) =>
                               filter === null ? true : status === filter
                           )
+                          .reverse()
                           .map(({ application: { job }, status }) => (
                               <JobCard
                                   key={job._id}
@@ -56,9 +57,18 @@ export default function MyInternsSection({
                           .filter(({ status }) =>
                               filter === null ? true : status === filter
                           )
+                          .reverse()
                           .map((intern) => (
                               <JobCard key={intern._id} job={intern} />
                           ))}
+                {internships.length === 0 ? (
+                    <>
+                        <span>You don't have any internship yet.</span>
+                        <br /> <br />
+                    </>
+                ) : (
+                    ""
+                )}
             </div>
         </div>
     );

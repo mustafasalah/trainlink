@@ -135,5 +135,9 @@ const canJoinIntern = async (jobId) => {
     });
     const applications = await data.json();
 
-    return applications.findIndex(({ job }) => job._id === jobId) === -1;
+    return (
+        applications.findIndex(
+            ({ job, status }) => job._id === jobId && status !== "Rejected"
+        ) === -1
+    );
 };

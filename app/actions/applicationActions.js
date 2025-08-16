@@ -70,13 +70,13 @@ export async function applyForJob(formData) {
         return { success: false, message: "Error validating job ID." };
     }
 
-    // Check if student has already applied to this job
+    // Check if student has already applied to this job and is not rejected yet
     try {
         const existingApplication = await Application.findOne({
             student: studentId,
             job: jobId,
         });
-        if (existingApplication) {
+        if (existingApplication && existingApplication.status !== "Rejected") {
             return {
                 success: false,
                 message: "You have already applied for this job.",
