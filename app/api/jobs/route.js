@@ -17,7 +17,11 @@ export async function GET(request) {
     if (companyId) {
         data = await Job.find({ companyId: companyId });
     } else {
-        data = await Job.find();
+        if (loggedUser.role === "Student")
+            data = await Job.find({ status: "active" });
+        else {
+            datat = await Jo.find();
+        }
     }
 
     return new Response(JSON.stringify(data), {
