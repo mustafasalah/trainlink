@@ -20,7 +20,7 @@ export async function GET(request) {
         if (loggedUser.role === "Student")
             data = await Job.find({ status: "active" });
         else {
-            datat = await Jo.find();
+            data = await Job.find();
         }
     }
 

@@ -7,6 +7,7 @@ import { AuthProvider } from "../Providers";
 
 export default async function RootLayouts({ children }) {
     const loggedUser = await getAuthUser();
+
     if (!loggedUser) return redirect("/login");
 
     return (
