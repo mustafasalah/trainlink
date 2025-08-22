@@ -125,6 +125,19 @@ export default function ApplicationsTable({ applications }) {
                     </div>
                     <div className="box">
                         <label>
+                            <i className="icon-circle-user-round"></i>Student
+                            GPA
+                        </label>
+                        <input
+                            type="text"
+                            value={
+                                selectedApplication?.student.academic?.gpa || ""
+                            }
+                            readOnly
+                        />
+                    </div>
+                    <div className="box">
+                        <label>
                             <i className="icon-building-2"></i>Company Name
                         </label>
                         <input
@@ -133,7 +146,7 @@ export default function ApplicationsTable({ applications }) {
                             readOnly
                         />
                     </div>
-                    <div className="box full-width">
+                    <div className="box">
                         <label>
                             <i className="icon-graduation-cap"></i>Opportunity
                             Name
