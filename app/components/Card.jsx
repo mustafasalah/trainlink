@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-
 export default function Card({
     url,
     thumbnailUrl,
     title,
     description,
+    onDelete,
     editable = false,
 }) {
     return (
@@ -22,7 +22,13 @@ export default function Card({
                 <Link className="btn-card" href={url}>
                     View details <i className="icon-chevron-right"></i>
                 </Link>
-                {editable ? <button className="remove-btn">Remove</button> : ""}
+                {editable ? (
+                    <button className="remove-btn" onClick={onDelete}>
+                        Remove
+                    </button>
+                ) : (
+                    ""
+                )}
             </div>
         </div>
     );

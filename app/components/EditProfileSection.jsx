@@ -98,20 +98,6 @@ export default function EditProfileSection({ user }) {
                     className="change"
                     onClick={() => {
                         onEditPasswordClicked();
-                        // if (
-                        //     oldPass !== "" &&
-                        //     newPass !== "" &&
-                        //     confirmPass === newPass
-                        // ) {
-                        //     alert(
-                        //         "Your password has been changed successfully!"
-                        //     );
-                        //     onEditPasswordClicked();
-                        // } else {
-                        //     alert(
-                        //         "There is an error in the password you entered!"
-                        //     );
-                        // }
                     }}
                 >
                     Change

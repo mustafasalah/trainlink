@@ -1,5 +1,31 @@
 import mongoose from "mongoose";
 
+// Sub-schema for the 'agreement' field
+const agreementSchema = new mongoose.Schema(
+    {
+        date: {
+            type: Date,
+            required: true,
+        },
+        period: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        renewal_type: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        nature: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+    },
+    { _id: false } // No separate _id for subdocuments
+);
+
 const companySchema = new mongoose.Schema(
     {
         thumbnailUrl: {
@@ -11,11 +37,6 @@ const companySchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            trim: true,
-        },
-        description: {
-            type: String,
-            required: true,
             trim: true,
         },
         about: {
@@ -40,9 +61,35 @@ const companySchema = new mongoose.Schema(
             required: false,
             trim: true,
         },
+        industry: {
+            type: String,
+            required: false,
+            trim: true,
+        },
+        agreement: {
+            type: agreementSchema,
+            required: false, // The agreement field might not always be present
+        },
     },
     {
         timestamps: true,
+    }
+);
+
+// Add a pre-remove hook to delete the owner user when a company is deleted
+companySchema.pre(
+    "deleteOne",
+    { document: true, query: false },
+    async function (next) {
+        try {
+            // Find and delete the user whose companyId field matches this company's _id
+            await mongoose.models.User.deleteOne({
+                companyId: this._id.toString(),
+            });
+            next();
+        } catch (error) {
+            next(error);
+        }
     }
 );
 

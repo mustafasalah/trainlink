@@ -18,13 +18,13 @@ export default function CreateTopicModal() {
                 className="new-forum"
                 onClose={hideModal}
             >
-                <div class="box-title">
+                <div className="box-title">
                     <h4>
                         Topic Title <span style={{ color: "red" }}>*</span>
                     </h4>
                     <input type="text" placeholder="Enter your topic here..." />
                 </div>
-                <div class="list-category">
+                <div className="list-category">
                     <h4>
                         Category <span style={{ color: "red" }}>*</span>
                     </h4>
@@ -39,7 +39,7 @@ export default function CreateTopicModal() {
                         </select>
                     </form>
                 </div>
-                <div class="box-mess">
+                <div className="box-mess">
                     <h4>
                         Message <span style={{ color: "red" }}>*</span>
                     </h4>

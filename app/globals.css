@@ -1780,15 +1780,17 @@ ul {
 /******************App Modal Details(student&admin&company)********************/
 .main-home .content .app-modal {
     width: 750px;
-    position: absolute;
+    position: fixed;
     top: 50%;
-    left: 47%;
+    left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
     border-radius: 10px;
     padding: 20px;
     z-index: 1;
     box-shadow: 0px 0px 10px #878787;
+    height: 90vh;
+    overflow: auto;
 }
 .main-home .content .app-modal .app-modal-head {
     display: flex;
@@ -1863,4 +1865,85 @@ ul {
     background-color: #f4f4f4;
     border: 1px solid #ec2c2c;
     color: #ec2c2c;
+}
+/************* app modal (ero)****************/
+.main-home .companies .app-modal .box label {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+.main-home .companies .app-modal .box input {
+    width: 100%;
+    border-radius: 5px;
+    padding: 15px 10px;
+    margin-top: 8px;
+    border: 1px solid #d8d8d8 !important;
+    color: #393939;
+    font-size: 16px;
+    background-color: #f7f7f7 !important;
+    font-family: "Montserrat";
+}
+.main-home .companies .app-modal .box .phone {
+    padding-left: 50px !important;
+}
+.main-home .companies .app-modal .box .key-num {
+    position: absolute;
+    top: 44px;
+    left: 10px;
+    transform: translate(1px, -1px);
+}
+.main-home .companies .app-modal .box select {
+    padding: 15px 10px;
+    margin-top: 8px;
+    font-size: 16px;
+    color: #393939;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    font-family: "Montserrat";
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    width: 100%;
+}
+.main-home .companies .app-modal .box div i {
+    position: absolute;
+    right: 3%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: #bababa;
+    cursor: pointer;
+}
+.main-home .companies .app-modal .box.full-width textarea {
+    margin-top: 8px;
+    padding: 15px 10px;
+    width: 100%;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    font-family: "Montserrat";
+    color: #393939;
+    font-size: 16px;
+    background-color: #f7f7f7;
+    resize: none;
+    overflow-y: hidden;
+}
+.main-home .companies .app-modal .box.full-width {
+    grid-column: span 2;
+}
+.main-home .companies .app-modal .app-ero-submit {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #900005 !important;
+    color: #fff;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-family: "Montserrat";
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.main-home .box {
+    position: relative;
 }

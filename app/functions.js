@@ -33,3 +33,8 @@ export function addPeriodToDate(baseDate, period) {
 
     return date.toISOString();
 }
+
+export function summarize(text) {
+    if (typeof text !== "string") return "";
+    return text.length > 120 ? text.slice(0, 120) + "..." : text;
+}

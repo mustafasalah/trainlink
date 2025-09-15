@@ -17,12 +17,13 @@ export default function Modal({
                 top: 0,
                 bottom: 0,
                 zIndex: 9,
+                height: "90vh",
             }}
         >
             <div className={className} style={{ zIndex: 99 }}>
                 <div className={className + "-head"}>
                     <h2>{title}</h2>
-                    <button onClick={onClose}>
+                    <button onClick={onClose} type="button">
                         <i className="icon-x"></i>
                     </button>
                 </div>
