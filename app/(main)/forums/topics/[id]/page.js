@@ -1,26 +1,37 @@
 import React from "react";
 
+const data = {
+    id: 2,
+    title: "Discussion about Full-Stack Development Internship",
+    content: `Hey everyone, I'm really interested in the Full-Stack
+            Developer Internshipat Zain Sudan. Has anyone applied or
+            have any insights about the interview process or what
+            kind of projects interns usually work on?`,
+    authorId: "66838a71b3e4f5a6b7c8d9e2",
+    authorName: "Mozan",
+    replies: 5,
+    dateTime: "2025-05-10 01:18:23",
+};
+
 export default function page() {
     return (
         <div className="content">
             <div className="head-disc">
                 <div className="title">
-                    <h3>Discussion about Full-Stack Development Internship</h3>
+                    <h3>{data.title}</h3>
                     <span>
-                        Author: <a href="#">Ali Ahmed</a>
+                        Author:{" "}
+                        <a href={`/users/${data.authorId}`}>
+                            {data.authorName}
+                        </a>
                         <i className="icon-dot"></i>
                         <span>
-                            <time datetime="date">2024-08-10 01:18:23</time>
+                            <time datetime="date">{data.dateTime}</time>
                         </span>
                     </span>
                 </div>
                 <div className="disc-box">
-                    <p>
-                        Hey everyone, I'm really interested in the Full-Stack
-                        Developer Internshipat Zain Sudan. Has anyone applied or
-                        have any insights about the interview process or what
-                        kind of projects interns usually work on?
-                    </p>
+                    <p>{data.content}</p>
                 </div>
             </div>
             <div className="disc-content">
@@ -34,7 +45,7 @@ export default function page() {
                             <img src="./img/avatar1.jpg" alt="" />
                             <div className="box">
                                 <div className="name-time-disc">
-                                    <span>Omer Saeed</span>
+                                    <span>Rasha Salah</span>
                                     <p>4 days ago</p>
                                 </div>
                                 <div className="disc-box">
@@ -52,7 +63,7 @@ export default function page() {
                             <img src="./img/avatar1.jpg" alt="" />
                             <div className="box">
                                 <div className="name-time-disc">
-                                    <span>Sarah Osman</span>
+                                    <span>Alaa Yahia</span>
                                     <p>3 days ago</p>
                                 </div>
                                 <div className="disc-box">
@@ -70,7 +81,7 @@ export default function page() {
                             <img src="./img/avatar1.jpg" alt="" />
                             <div className="box">
                                 <div className="name-time-disc">
-                                    <span>Ahmed Salah</span>
+                                    <span>Mozan</span>
                                     <p>22 hours ago</p>
                                 </div>
                                 <div className="disc-box">
