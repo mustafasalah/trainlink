@@ -77,7 +77,7 @@ export async function loginAction(prevState, formData) {
             }),
             ...(user.role === "Company" &&
                 user.companyId && {
-                    companyId: user.companyId.toString(),
+                    companyId: user.companyId,
                     companyName: user.companyName,
                 }),
         };

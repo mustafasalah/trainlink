@@ -26,7 +26,7 @@ export default function page() {
                         </a>
                         <i className="icon-dot"></i>
                         <span>
-                            <time datetime="date">{data.dateTime}</time>
+                            <time dateTime="date">{data.dateTime}</time>
                         </span>
                     </span>
                 </div>

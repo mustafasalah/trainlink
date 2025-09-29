@@ -116,6 +116,7 @@ export default async function InternDetails({ params }) {
                         )}
                     </div>
                     {loggedUser.role === "Student" &&
+                    loggedUser?.academic.registered &&
                     (await canJoinIntern(job._id)) ? (
                         <ApplySection job={job} company={company} />
                     ) : (
