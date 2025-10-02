@@ -83,9 +83,15 @@ export default function CompaniesView({ companies }) {
                     {loggedUser.role === "ERO" ? "Contracted" : ""} Companies
                     <span className="count">({companies.length})</span>
                 </div>
-                <div className="buttons">
-                    <button onClick={handleOpenModal}>Add New Company</button>
-                </div>
+                {loggedUser.role === "ERO" ? (
+                    <div className="buttons">
+                        <button onClick={handleOpenModal}>
+                            Add New Company
+                        </button>
+                    </div>
+                ) : (
+                    ""
+                )}
             </h3>
             <div className="companies-cards">
                 {companies
