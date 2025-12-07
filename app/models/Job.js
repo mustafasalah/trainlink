@@ -14,7 +14,7 @@ const jobSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["ongoing", "finished", null], // Includes null for cases where status isn't set
+            enum: ["active", "inactive", null], // Includes null for cases where status isn't set
             default: null,
         },
         companyId: {
