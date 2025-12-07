@@ -1587,7 +1587,7 @@ ul {
     border: 1px solid #ebebeb;
     border-radius: 10px;
     background-color: #f9f9f9;
-    color: #939393;
+    color: #000;
     margin-top: 10px;
     text-align: justify;
 }
@@ -1625,6 +1625,7 @@ ul {
     .name-time-disc {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
 }
 .main-home
     .content
@@ -1648,6 +1649,7 @@ ul {
     .name-time-disc
     p {
     color: #777777;
+    font-size: 0.875em;
 }
 .main-home
     .content
@@ -1661,7 +1663,7 @@ ul {
     border: 1px solid #ebebeb;
     border-radius: 10px;
     background-color: #f9f9f9;
-    color: #939393;
+    color: #000;
     margin-top: 5px;
     text-align: justify;
 }

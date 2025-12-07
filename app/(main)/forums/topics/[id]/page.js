@@ -1,107 +1,103 @@
 import React from "react";
+import connectDB from "@/app/DBconnection";
+import ForumTopic from "@/app/models/ForumTopic";
+import ForumReply from "@/app/models/ForumReply";
+import User from "@/app/models/User"; // <── ADD THIS
+import { format } from "timeago.js";
+import ReplyForm from "@/app/components/ReplyForm";
 
-const data = {
-    id: 2,
-    title: "Discussion about Full-Stack Development Internship",
-    content: `Hey everyone, I'm really interested in the Full-Stack
-            Developer Internshipat Zain Sudan. Has anyone applied or
-            have any insights about the interview process or what
-            kind of projects interns usually work on?`,
-    authorId: "66838a71b3e4f5a6b7c8d9e2",
-    authorName: "Mozan",
-    replies: 5,
-    dateTime: "2025-05-10 01:18:23",
-};
+export default async function TopicPage({ params }) {
+    const { id } = await params;
 
-export default function page() {
+    await connectDB();
+
+    const topic = await ForumTopic.findById(id).lean();
+    if (!topic) {
+        return (
+            <div className="content">
+                <p>Topic not found.</p>
+            </div>
+        );
+    }
+
+    // Fetch replies first
+    const replies = await ForumReply.find({ topicId: id })
+        .sort({ createdAt: 1 })
+        .lean();
+
+    // Fetch avatar for each reply
+    const repliesWithAvatar = await Promise.all(
+        replies.map(async (reply) => {
+            const user = await User.findById(reply.authorId).lean();
+            return {
+                ...reply,
+                authorAvatar: user?.profileImage || "/img/default-avatar.png",
+            };
+        })
+    );
+
+    const createdAtStr = new Date(topic.createdAt)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+
     return (
         <div className="content">
             <div className="head-disc">
                 <div className="title">
-                    <h3>{data.title}</h3>
+                    <h3>{topic.title}</h3>
                     <span>
                         Author:{" "}
-                        <a href={`/users/${data.authorId}`}>
-                            {data.authorName}
+                        <a href={`/users/${topic.authorId}`}>
+                            {topic.authorName}
                         </a>
                         <i className="icon-dot"></i>
                         <span>
-                            <time dateTime="date">{data.dateTime}</time>
+                            <time dateTime={topic.createdAt.toString()}>
+                                {createdAtStr}
+                            </time>
                         </span>
                     </span>
                 </div>
+
                 <div className="disc-box">
-                    <p>{data.content}</p>
+                    <p>{topic.message}</p>
                 </div>
             </div>
+
             <div className="disc-content">
                 <div className="replies">
                     <div className="title">
                         <h4>Replies</h4>
-                        <span>(3)</span>
+                        <span>({repliesWithAvatar.length})</span>
                     </div>
+
                     <div className="replies-content">
-                        <div className="reply-box">
-                            <img src="./img/avatar1.jpg" alt="" />
-                            <div className="box">
-                                <div className="name-time-disc">
-                                    <span>Rasha Salah</span>
-                                    <p>4 days ago</p>
+                        {repliesWithAvatar.length === 0 ? (
+                            <p>No replies yet. Be the first to reply.</p>
+                        ) : (
+                            repliesWithAvatar.map((reply) => (
+                                <div
+                                    className="reply-box"
+                                    key={reply._id.toString()}
+                                >
+                                    <img src={reply.authorAvatar} alt="" />
+                                    <div className="box">
+                                        <div className="name-time-disc">
+                                            <span>{reply.authorName}</span>
+                                            <p>{format(reply.createdAt)}</p>
+                                        </div>
+                                        <div className="disc-box">
+                                            <p>{reply.message}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="disc-box">
-                                    <p>
-                                        Hi Ali, I applied last year . the first
-                                        interview was mostly about your
-                                        technical skills and understanding of
-                                        basic programming concept. they might
-                                        ask you about your projects.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="reply-box">
-                            <img src="./img/avatar1.jpg" alt="" />
-                            <div className="box">
-                                <div className="name-time-disc">
-                                    <span>Alaa Yahia</span>
-                                    <p>3 days ago</p>
-                                </div>
-                                <div className="disc-box">
-                                    <p>
-                                        Omer Saeed is right. be prepared to talk
-                                        about your experience with different
-                                        frameworks and languages. for projects,
-                                        thet usually give you a small task to
-                                        complete during the Internship
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="reply-box">
-                            <img src="./img/avatar1.jpg" alt="" />
-                            <div className="box">
-                                <div className="name-time-disc">
-                                    <span>Mozan</span>
-                                    <p>22 hours ago</p>
-                                </div>
-                                <div className="disc-box">
-                                    <p>
-                                        i'm starting my Internship there net
-                                        month, from what i've heard you'll
-                                        likely be working on improving their
-                                        internal tools and maybe some front-end
-                                        enhancements for their customer portal.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                            ))
+                        )}
                     </div>
                 </div>
-                <div className="add-reply-box">
-                    <h5>Reply</h5>
-                    <textarea placeholder="Write your reply ..."></textarea>
-                    <button>Post</button>
-                </div>
+
+                <ReplyForm topicId={id} />
             </div>
         </div>
     );

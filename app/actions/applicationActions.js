@@ -1,4 +1,3 @@
-// app/actions/applicationActions.js
 "use server";
 
 import Application from "../models/Application"; // Your Application model

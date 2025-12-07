@@ -1,104 +1,90 @@
 import React from "react";
 import ForumSection from "../../components/ForumSection";
 import CreateTopicModal from "@/app/components/CreateTopicModal";
+import connectDB from "@/app/DBconnection";
+import ForumTopic from "@/app/models/ForumTopic";
 
-export default async function Forums() {
-    // const data = await fetch("http://localhost:3000/api/applications");
-    // const applications = await data.json();
+export default async function Forums({ searchParams }) {
+    const q = ((await searchParams?.q) || "").trim();
 
-    const generalTopics = [
-        {
-            id: 1,
-            title: "Welcome New Users! Introduce Yourselves",
-            authorId: "66838a71b3e4f5a6b7c8d9e3",
-            authorName: "Alaa Yahia",
-            replies: 3,
-            dateTime: "2025-05-11 12:48:03",
-        },
-        {
-            id: 2,
-            title: "Discussion about Full-Stack Development Internship",
-            authorId: "66838a71b3e4f5a6b7c8d9e2",
-            authorName: "Mozan",
-            replies: 5,
-            dateTime: "2025-05-10 01:18:23",
-        },
-        {
-            id: 3,
-            title: "Suggestion for New Feature",
-            authorId: "68650341475f51e86dcc7dd0",
-            authorName: "Rasha Salah",
-            replies: 9,
-            dateTime: "2025-05-01 22:18:12",
-        },
-    ];
+    // 1) Connect to MongoDB
+    await connectDB();
 
-    const supportTopics = [
-        {
-            id: 4,
-            title: "Need help understanding Convolutional Neural Networks (CNNs)",
-            authorId: "68650341475f51e86dcc7dd0",
-            authorName: "Rasha Salah",
-            replies: 7,
-            dateTime: "2025-05-09 12:48:03",
-        },
-        {
-            id: 5,
-            title: "Study group for Database Management Systems?",
-            authorId: "66838a71b3e4f5a6b7c8d9e3",
-            authorName: "Alaa Yahia",
-            replies: 12,
-            dateTime: "2025-05-06 01:18:23",
-        },
-        {
-            id: 6,
-            title: "Looking for resources on Advanced Algorithms",
-            authorId: "68650341475f51e86dcc7dd0",
-            authorName: "Rasha Salah",
-            replies: 4,
-            dateTime: "2025-05-04 22:18:12",
-        },
-    ];
+    // 2) Build filter based on search query
+    const filter = q
+        ? {
+              $or: [
+                  { title: { $regex: q, $options: "i" } },
+                  { message: { $regex: q, $options: "i" } },
+              ],
+          }
+        : {};
+
+    // 3) Fetch topics (filtered if q exists), newest first
+    const rawTopics = await ForumTopic.find(filter)
+        .sort({ createdAt: -1 })
+        .lean();
+
+    // 4) Helper to map DB document -> TopicItem props
+    const mapTopic = (t) => ({
+        id: t._id.toString(),
+        title: t.title,
+        authorId: t.authorId,
+        authorName: t.authorName,
+        replies: t.repliesCount ?? 0,
+        dateTime: new Date(t.createdAt)
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " "),
+    });
+
+    // 5) Split by category
+    const generalTopics = rawTopics
+        .filter((t) => t.category === "General Discussion")
+        .map(mapTopic);
+
+    const supportTopics = rawTopics
+        .filter((t) => t.category === "Academic Support")
+        .map(mapTopic);
 
     return (
-        <>
-            <div className="content">
-                <div className="forums">
-                    <h3>Forums</h3>
-                    <div className="apps-search-form">
-                        <div className="app-search-status">
-                            <div className="search-box">
+        <div className="content">
+            <div className="forums">
+                <h3>Forums</h3>
+
+                <div className="apps-search-form">
+                    <div className="app-search-status">
+                        <div className="search-box">
+                            {/* GET form so ?q=... appears in URL */}
+                            <form>
                                 <input
                                     type="search"
-                                    name=""
-                                    id=""
+                                    name="q"
                                     placeholder="Search for specific topic"
+                                    defaultValue={q}
                                 />
-                            </div>
-                        </div>
-                        <div className="items">
-                            <CreateTopicModal />
+                            </form>
                         </div>
                     </div>
-                    <div className="apps-form">
-                        <ForumSection
-                            title="General Discussion"
-                            description="A space for general discussion, announcements,
-                                and platform feedback."
-                            topics={generalTopics}
-                        />
-                        <ForumSection
-                            title="Academic Support"
-                            description="Discuss study tips, ask for help with coursework, and share academic resources."
-                            topics={supportTopics}
-                        />
-                        {/* <div className="view-more">
-                        <button>View More</button>
-                        <p>(2 of {applications.length} Applications)</p>
-                    </div> */}
+                    <div className="items">
+                        <CreateTopicModal />
                     </div>
                 </div>
+
+                <div className="apps-form">
+                    <ForumSection
+                        title="GENERAL DISCUSSION"
+                        description="A space for general discussion, announcements, and platform feedback."
+                        topics={generalTopics}
+                    />
+
+                    <ForumSection
+                        title="ACADEMIC SUPPORT"
+                        description="Discuss study tips, ask for help with coursework, and share academic resources."
+                        topics={supportTopics}
+                    />
+                </div>
             </div>
-        </>
+        </div>
     );
 }
