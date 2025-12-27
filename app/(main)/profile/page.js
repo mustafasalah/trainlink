@@ -31,15 +31,15 @@ export default async function page({ params }) {
         const jobs = await JobData.json();
 
         return (
-            <>
-                <div className="head-title">
-                    <h3>My Profile</h3>
-                    <div className="buttons">
-                        <button className="">Edit Profile</button>
+            <div className="content">
+                <div className="student-profile">
+                    <div className="student">
+                        <h3>My Profile</h3>
+                        <EditProfileSection user={user} />
                     </div>
+                    <CompanyProfile company={company} jobs={jobs} />
                 </div>
-                <CompanyProfile company={company} jobs={jobs} />
-            </>
+            </div>
         );
     }
 
