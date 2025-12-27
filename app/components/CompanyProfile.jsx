@@ -6,7 +6,6 @@ import { getAuthUser } from "../auth";
 
 export default async function CompanyProfile({ company, jobs }) {
     const loggedUser = await getAuthUser();
-
     return (
         <div className="content">
             <div className="company-details">

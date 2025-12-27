@@ -1,8 +1,6 @@
-import Image from "next/image";
 import React from "react";
-import JobCard from "../../../components/JobCard";
-import BackButton from "@/app/components/BackButton";
 import CompanyProfile from "@/app/components/CompanyProfile";
+import { getAuthToken } from "@/app/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -12,10 +10,12 @@ export default async function CompanyDetials({ params }) {
         `http://localhost:3000/api/companies/${companyId}`
     );
     const company = await companyData.json();
-
     const JobData = await fetch(
         `http://localhost:3000/api/jobs?companyId=${companyId}`,
         {
+            headers: {
+                "auth-token": await getAuthToken(),
+            },
             next: { tags: ["jobs"] },
         }
     );

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { getAuthUser } from "@/app/auth";
+import { getAuthToken, getAuthUser } from "@/app/auth";
 import EditProfileSection from "@/app/components/EditProfileSection";
 import CompanyProfile from "@/app/components/CompanyProfile";
 import Certification from "@/app/components/Certification";
@@ -24,6 +24,9 @@ export default async function page({ params }) {
         const JobData = await fetch(
             `http://localhost:3000/api/jobs?companyId=${companyId}`,
             {
+                headers: {
+                    "auth-token": await getAuthToken(),
+                },
                 next: { tags: ["jobs"] },
             }
         );
@@ -32,7 +35,7 @@ export default async function page({ params }) {
         return (
             <>
                 <div className="head-title">
-                    <h3>My Profile</h3>
+                    <h3>{user.fullName}'s Profile</h3>
                     {isSameLoggedUser ? (
                         <div className="buttons">
                             <button className="">Edit Profile</button>
