@@ -35,17 +35,13 @@ export default async function page() {
 
                 <div className="available-interns">
                     <h3>
-                        Available Interns<span>({internships.length})</span>
+                        Available Interns<span>({availableJobs.length})</span>
                     </h3>
                     <div className="cards">
                         {availableJobs.map((job) => (
                             <JobCard key={job._id} job={job} />
                         ))}
                     </div>
-                    {/* <div className="view-more">
-                        <button>View More</button>
-                        <p>(3 of 12 Training Opportunities)</p>
-                    </div> */}
                 </div>
             </div>
         </div>
