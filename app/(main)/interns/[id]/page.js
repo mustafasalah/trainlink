@@ -120,7 +120,16 @@ export default async function InternDetails({ params }) {
                     (await canJoinIntern(job._id)) ? (
                         <ApplySection job={job} company={company} />
                     ) : (
-                        ""
+                        <p
+                            style={{
+                                padding: 16,
+                                color: "red",
+                                fontWeight: 500,
+                                textAlign: "center",
+                            }}
+                        >
+                            You must be registered first to apply
+                        </p>
                     )}
                 </div>
             </div>
