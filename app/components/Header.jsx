@@ -1,19 +1,15 @@
+"use client";
+
 import React from "react";
+import useLoggedUser from "../hooks/useLoggedUser";
 
 export default function Header() {
+    const loggedUser = useLoggedUser();
     return (
         <div className="head">
-            <div className="search">
-                <input
-                    type="search"
-                    placeholder="What do you want to interns?"
-                />
-            </div>
-            <div className="icons">
-                <i className="icon-languages"></i>
-                <i className="icon-sun-moon"></i>
-                <i className="icon-bell"></i>
-            </div>
+            <h3>
+                <strong>Welcome</strong>, {loggedUser.fullName}
+            </h3>
         </div>
     );
 }

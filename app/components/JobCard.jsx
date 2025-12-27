@@ -1,3 +1,4 @@
+// JobCard.jsx
 "use client";
 
 import Image from "next/image";
@@ -11,6 +12,7 @@ export default function JobCard({
     job,
     InternStatus = null,
     hideCompanyName = false,
+    onEdit, // ✅ NEW
 }) {
     const loggedUser = useLoggedUser();
     const router = useRouter();
@@ -46,7 +48,7 @@ export default function JobCard({
         }
     }, [job._id, job.title, router]);
 
-    // TOGGLE STATUS HANDLER (active <-> inactive)
+    // TOGGLE STATUS HANDLER
     const handleToggleStatus = useCallback(async () => {
         const current = job.status || "inactive";
         const nextStatus = current === "active" ? "inactive" : "active";
@@ -59,9 +61,7 @@ export default function JobCard({
         try {
             const res = await fetch(`/api/internships/${job._id}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: nextStatus }),
             });
 
@@ -139,6 +139,23 @@ export default function JobCard({
 
                         <button
                             type="button"
+                            onClick={() => onEdit?.(job)}
+                            style={{
+                                background: "#2563eb",
+                                color: "white",
+                                border: "none",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "12px",
+                            }}
+                            title="Edit"
+                        >
+                            <i className="icon-pencil"></i>
+                        </button>
+
+                        <button
+                            type="button"
                             onClick={handleDelete}
                             style={{
                                 background: "#dc2626",
@@ -149,6 +166,7 @@ export default function JobCard({
                                 cursor: "pointer",
                                 fontSize: "12px",
                             }}
+                            title="Delete"
                         >
                             <i className="icon-trash"></i>
                         </button>
