@@ -1,11 +1,12 @@
 import React from "react";
 import ApplicationsTable from "@/app/components/ApplicationsTable";
-import { getAuthToken } from "@/app/auth";
+import { getAuthToken, getAuthUser } from "@/app/auth";
 import ApplicationsFilters from "@/app/components/ApplicationsFilter";
 
 export const dynamic = "force-dynamic";
 
 export default async function Applications({ searchParams }) {
+    const loggedUser = await getAuthUser();
     const q = (searchParams?.q || "").trim();
 
     const qs = new URLSearchParams();
@@ -27,7 +28,18 @@ export default async function Applications({ searchParams }) {
         <div className="content">
             <div className="applications">
                 <h3>
-                    My Applications <span>({applications.length})</span>
+                    My Applications{" "}
+                    <span>
+                        (
+                        {
+                            applications.filter((application) => {
+                                if (loggedUser.role === "Company")
+                                    return application.acceptedByAdmin;
+                                return true;
+                            }).length
+                        }
+                        )
+                    </span>
                 </h3>
 
                 <ApplicationsFilters />
