@@ -25,6 +25,9 @@ export default async function page({ params }) {
         const JobData = await fetch(
             `http://localhost:3000/api/jobs?companyId=${companyId}`,
             {
+                headers: {
+                    "auth-token": await getAuthToken(),
+                },
                 next: { tags: ["jobs"] },
             }
         );
