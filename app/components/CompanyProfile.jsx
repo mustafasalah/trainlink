@@ -4,8 +4,13 @@ import BackButton from "./BackButton";
 import JobCard from "./JobCard";
 import { getAuthUser } from "../auth";
 
-export default async function CompanyProfile({ company, jobs }) {
+export default async function CompanyProfile({
+    company,
+    jobs,
+    withoutTrainingOpportunities = false,
+}) {
     const loggedUser = await getAuthUser();
+
     return (
         <div className="content">
             <div className="company-details">
@@ -84,26 +89,30 @@ export default async function CompanyProfile({ company, jobs }) {
                         ) : (
                             ""
                         )}
-                        <div className="company-offerd">
-                            <h3>Offered Training Opportunities</h3>
+                        {withoutTrainingOpportunities ? (
+                            ""
+                        ) : (
+                            <div className="company-offerd">
+                                <h3>Offered Training Opportunities</h3>
 
-                            {jobs.length ? (
-                                <div className="cards">
-                                    {jobs.map((job) => (
-                                        <JobCard
-                                            key={job._id}
-                                            job={job}
-                                            hideCompanyName
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <p>
-                                    there are no training opportunities offerd
-                                    by this company yet
-                                </p>
-                            )}
-                        </div>
+                                {jobs.length ? (
+                                    <div className="cards">
+                                        {jobs.map((job) => (
+                                            <JobCard
+                                                key={job._id}
+                                                job={job}
+                                                hideCompanyName
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p>
+                                        there are no training opportunities
+                                        offerd by this company yet
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <BackButton />
                 </div>

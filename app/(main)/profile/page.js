@@ -2,7 +2,7 @@ import Image from "next/image";
 import React from "react";
 import Certification from "../../components/Certification";
 import EditProfileSection from "../../components/EditProfileSection";
-import { getAuthUser } from "@/app/auth";
+import { getAuthToken, getAuthUser } from "@/app/auth";
 import CompanyProfile from "@/app/components/CompanyProfile";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +40,11 @@ export default async function page({ params }) {
                         <h3>My Profile</h3>
                         <EditProfileSection user={user} />
                     </div>
-                    <CompanyProfile company={company} jobs={jobs} />
+                    <CompanyProfile
+                        company={company}
+                        jobs={jobs}
+                        withoutTrainingOpportunities
+                    />
                 </div>
             </div>
         );
