@@ -3,6 +3,7 @@ import { getAuthUser } from "@/app/auth";
 import connectDB from "@/app/DBconnection";
 import Application from "@/app/models/Application";
 import Job from "@/app/models/Job";
+import Internship from "@/app/models/Internship";
 
 export async function GET(request) {
     const loggedUser = await getAuthUser(true);
@@ -73,5 +74,24 @@ export async function GET(request) {
         applications = applications.filter((a) => a.job);
     }
 
-    return NextResponse.json(applications, { status: 200 });
+    const appIds = applications.map((a) => a._id);
+
+    const internships = await Internship.find({ application: { $in: appIds } })
+        .select("application status")
+        .lean();
+
+    const statusMap = new Map(
+        internships.map((i) => [i.application.toString(), i.status])
+    );
+
+    // Attach internshipStatus
+    const applicationsWithInternship = applications.map((a) => ({
+        ...(a.toObject?.() ?? a),
+        internshipStatus: statusMap.get(a._id.toString()) || null,
+    }));
+
+    return new Response(JSON.stringify(applicationsWithInternship), {
+        status: 200,
+        headers: { contentType: "application/json" },
+    });
 }

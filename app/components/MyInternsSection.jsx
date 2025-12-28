@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function MyInternsSection({
     internships,
-    tabs = ["Active", "Inactive"],
+    tabs = ["Ongoing", "Finished"],
 }) {
     const [filter, changeFilter] = useState(null);
     const loggedUser = useLoggedUser();
@@ -153,9 +153,10 @@ export default function MyInternsSection({
             <div className="interns-cards">
                 {loggedUser.role === "Student"
                     ? internships
-                          .filter(({ status }) =>
-                              filter === null ? true : status === filter
-                          )
+                          .filter(({ status }) => {
+                              if (filter === null) return true;
+                              return (status || "").toLowerCase() === filter;
+                          })
                           .reverse()
                           .map(({ application: { job }, status }) => (
                               <JobCard

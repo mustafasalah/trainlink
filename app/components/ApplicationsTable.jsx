@@ -13,6 +13,7 @@ import {
     rejectApplicationByCompany,
 } from "../services/ApplicationService";
 import { useRouter } from "next/navigation";
+import FinishInternshipButton from "./FinishInternshipButton";
 
 export default function ApplicationsTable({ applications }) {
     const loggedUser = useLoggedUser();
@@ -220,6 +221,35 @@ export default function ApplicationsTable({ applications }) {
                             </Link>
                         </div>
                     </div>
+
+                    {selectedApplication?.status === "Accepted" &&
+                        selectedApplication?.internshipStatus && (
+                            <div className="box full-width">
+                                <label>
+                                    <i className="icon-circle-dashed"></i>
+                                    Internship Status
+                                </label>
+                                <input
+                                    type="text"
+                                    value={
+                                        selectedApplication?.internshipStatus ||
+                                        ""
+                                    }
+                                    readOnly
+                                />
+                            </div>
+                        )}
+
+                    {canFinish(loggedUser, selectedApplication) ? (
+                        <div className="box full-width">
+                            <FinishInternshipButton
+                                applicationId={selectedApplication._id}
+                                callback={handleCloseModal}
+                            />
+                        </div>
+                    ) : (
+                        ""
+                    )}
                     {selectedApplication?.status === "Rejected" &&
                     selectedApplication?.notes ? (
                         <div className="box full-width">
@@ -267,5 +297,14 @@ export default function ApplicationsTable({ applications }) {
                 </>
             </Modal>
         </div>
+    );
+}
+
+function canFinish(loggedUser, application) {
+    return (
+        loggedUser.role === "Company" &&
+        application?.acceptedByAdmin &&
+        application.status === "Accepted" &&
+        application?.internshipStatus === "Ongoing"
     );
 }
