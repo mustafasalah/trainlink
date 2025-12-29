@@ -1,19 +1,17 @@
 "use server";
 
-import path from "path";
-import { unlink, writeFile } from "fs/promises";
-import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
 import Company from "../models/Company";
 import User from "../models/User";
 import connectDB from "../DBconnection";
-
-const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+import {
+    uploadFileToSupabase,
+    removeFromSupabase,
+} from "@/app/lib/supabaseStorage";
 
 // Helper: converts any Mongoose Document to plain JSON safe for Server Actions
 const toPlain = (doc) => JSON.parse(JSON.stringify(doc));
 
-// Helper: builds flat, safe Company DTO
 const buildCompanyDTO = (c) => ({
     _id: c._id?.toString?.() ?? c._id,
     thumbnailUrl: c.thumbnailUrl ?? null,
@@ -34,7 +32,6 @@ const buildCompanyDTO = (c) => ({
     updatedAt: c.updatedAt,
 });
 
-// Helper: builds flat, safe User DTO
 const buildUserDTO = (u) => ({
     _id: u._id?.toString?.() ?? u._id,
     profileImage: u.profileImage ?? null,
@@ -49,34 +46,19 @@ const buildUserDTO = (u) => ({
     updatedAt: u.updatedAt,
 });
 
-// Since thumbnailUrl starts with "/uploads/..."
-// turn it into an absolute path under /public
-const publicPathFromThumb = (thumb) => {
-    // strip leading "/" if present
-    const relative = thumb?.startsWith("/") ? thumb.slice(1) : thumb || "";
-    return path.join(process.cwd(), "public", relative); // public/uploads/...
-};
-
-/**
- * Creates a new company and its owner user atomically.
- * Returns plain DTOs (no Mongoose Documents) to avoid serialization/circular issues.
- */
 export async function createCompanyAndOwner(companyData, userData, photoFile) {
     await connectDB();
     const session = await mongoose.startSession();
-    let thumbnailUrl = ""; // keep it to delete the file in case of failure
+    let uploaded = null;
 
     try {
         await session.startTransaction();
 
-        // 0) Validate photo file
-        if (!(photoFile instanceof File)) {
+        if (!(photoFile instanceof File) || photoFile.size === 0) {
             throw new Error("Photo file is missing or invalid.");
         }
 
-        // 1) Pre-check unique fields to provide clearer error messages
-        //    - Company: name (unique), email (unique but optional)
-        //    - User: email (required, unique), username (unique, sparse)
+        // Pre-check unique fields
         const checks = await Promise.all([
             Company.exists({ name: companyData?.name }),
             companyData?.email
@@ -87,39 +69,40 @@ export async function createCompanyAndOwner(companyData, userData, photoFile) {
                 ? User.exists({ username: userData.username })
                 : null,
         ]);
+
         if (checks[0])
             throw new Error("A company with this name already exists.");
         if (checks[1]) throw new Error("Company email is already in use.");
         if (checks[2]) throw new Error("Owner email is already in use.");
         if (checks[3]) throw new Error("Username is already taken.");
 
-        // 2) Upload the photo
-        const photoBytes = await photoFile.arrayBuffer();
-        const photoBuffer = Buffer.from(photoBytes);
-        const fileName = `${uuidv4()}-${photoFile.name.replace(/\s/g, "_")}`;
-        const filePath = path.join(UPLOADS_DIR, fileName);
-        await writeFile(filePath, photoBuffer);
-        thumbnailUrl = `/uploads/${fileName}`;
+        // Upload to Supabase (rename to company name)
+        uploaded = await uploadFileToSupabase({
+            file: photoFile,
+            folder: "companies",
+            fileBaseName: companyData.name,
+            contentTypeFallback: "image/jpeg",
+        });
 
-        // 3) Create company
+        // Create company
         const companyDocArr = await Company.create(
             [
                 {
                     ...companyData,
-                    thumbnailUrl,
+                    thumbnailUrl: uploaded.publicUrl,
                 },
             ],
             { session }
         );
         const companyDoc = companyDocArr[0];
 
-        // 4) Create user and link it to the company
+        // Create user linked to company
         const newUserArr = await User.create(
             [
                 {
                     ...userData,
                     email: (userData.email || "").toLowerCase(),
-                    profileImage: thumbnailUrl,
+                    profileImage: uploaded.publicUrl,
                     role: "Company",
                     companyId: companyDoc._id.toString(),
                     companyName: companyDoc.name,
@@ -129,32 +112,23 @@ export async function createCompanyAndOwner(companyData, userData, photoFile) {
         );
         const userDoc = newUserArr[0];
 
-        // 5) Commit transaction
         await session.commitTransaction();
 
-        // 6) Return flat DTOs (no Mongoose Documents)
-        const companyDTO = buildCompanyDTO(toPlain(companyDoc));
-        const userDTO = buildUserDTO(toPlain(userDoc));
-        return { ok: true, company: companyDTO, user: userDTO };
+        return {
+            ok: true,
+            company: buildCompanyDTO(toPlain(companyDoc)),
+            user: buildUserDTO(toPlain(userDoc)),
+        };
     } catch (err) {
-        // Rollback the transaction
         try {
             await session.abortTransaction();
         } catch (_) {}
 
-        // Delete the uploaded photo if it was saved
-        if (thumbnailUrl) {
-            try {
-                await unlink(publicPathFromThumb(thumbnailUrl));
-            } catch (unlinkError) {
-                console.warn(
-                    "Failed to delete uploaded file on error:",
-                    unlinkError
-                );
-            }
+        // Delete uploaded photo if transaction fails
+        if (uploaded?.storagePath) {
+            await removeFromSupabase([uploaded.storagePath]);
         }
 
-        // Provide clearer messages for duplicate key errors (code 11000)
         if (err?.code === 11000) {
             const fields = Object.keys(err.keyPattern || {});
             throw new Error(
@@ -169,10 +143,6 @@ export async function createCompanyAndOwner(companyData, userData, photoFile) {
     }
 }
 
-/**
- * Deletes a company and its owner (owner deleted by Company pre hook).
- * Returns a plain JSON result (not a Mongoose Document).
- */
 export async function deleteCompanyAndOwner(companyId) {
     await connectDB();
     const session = await mongoose.startSession();
@@ -181,37 +151,22 @@ export async function deleteCompanyAndOwner(companyId) {
         await session.startTransaction();
 
         const company = await Company.findById(companyId).session(session);
-        if (!company) {
-            throw new Error("Company not found.");
-        }
+        if (!company) throw new Error("Company not found.");
 
-        const thumbnailUrl = company.thumbnailUrl;
-
-        // Remove the photo from the filesystem
-        if (thumbnailUrl) {
-            try {
-                await unlink(publicPathFromThumb(thumbnailUrl));
-            } catch (unlinkError) {
-                console.warn(
-                    `Could not delete file for ${thumbnailUrl}. It may not exist.`,
-                    unlinkError
-                );
-            }
-        }
-
-        // Delete the company (pre hook will delete the owner)
+        // We only have thumbnailUrl stored, not storagePath
+        // So we cannot delete the file precisely from Supabase unless you store thumbnailPath in DB.
+        // We'll just delete the company record (owner deleted by pre-hook).
         const result = await company.deleteOne({ session });
 
         await session.commitTransaction();
 
-        // Return a simple result (no documents)
         return { ok: true, deletedCount: result?.deletedCount ?? 1 };
     } catch (err) {
         try {
             await session.abortTransaction();
         } catch (_) {}
-        console.error("Error deleting company with photo:", err);
-        throw new Error(err?.message || "Failed to delete company with photo.");
+        console.error("Error deleting company:", err);
+        throw new Error(err?.message || "Failed to delete company.");
     } finally {
         session.endSession();
     }

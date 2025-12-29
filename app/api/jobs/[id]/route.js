@@ -1,15 +1,14 @@
-// app/api/internships/[id]/route.js
-import path from "path";
-import { writeFile, unlink } from "fs/promises";
-import { v4 as uuidv4 } from "uuid";
 import connectDB from "@/app/DBconnection";
 import Job from "@/app/models/Job";
 import { getAuthUser } from "@/app/auth";
-
-const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+import {
+    uploadFileToSupabase,
+    removeFromSupabase,
+} from "@/app/lib/supabaseStorage";
 
 export async function GET(request, { params }) {
     await connectDB();
+
     const jobId = params.id;
     const job = await Job.findById(jobId).lean();
 
@@ -31,6 +30,7 @@ export async function PATCH(request, { params }) {
     if (!loggedUser) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
             status: 401,
+            headers: { contentType: "application/json" },
         });
     }
 
@@ -41,7 +41,7 @@ export async function PATCH(request, { params }) {
     if (!job) {
         return new Response(
             JSON.stringify({ error: "Internship not found." }),
-            { status: 404 }
+            { status: 404, headers: { contentType: "application/json" } }
         );
     }
 
@@ -51,6 +51,7 @@ export async function PATCH(request, { params }) {
     ) {
         return new Response(JSON.stringify({ error: "Forbidden" }), {
             status: 403,
+            headers: { contentType: "application/json" },
         });
     }
 
@@ -59,19 +60,20 @@ export async function PATCH(request, { params }) {
     // 1) JSON PATCH (for status toggle)
     if (contentType.includes("application/json")) {
         const body = await request.json();
+
         if (body.status && ["active", "inactive"].includes(body.status)) {
             job.status = body.status;
             await job.save();
+
             return new Response(
                 JSON.stringify({ ok: true, status: job.status }),
-                {
-                    status: 200,
-                    headers: { contentType: "application/json" },
-                }
+                { status: 200, headers: { contentType: "application/json" } }
             );
         }
+
         return new Response(JSON.stringify({ error: "Invalid payload." }), {
             status: 400,
+            headers: { contentType: "application/json" },
         });
     }
 
@@ -102,7 +104,7 @@ export async function PATCH(request, { params }) {
         ) {
             return new Response(
                 JSON.stringify({ error: "Missing required fields." }),
-                { status: 400 }
+                { status: 400, headers: { contentType: "application/json" } }
             );
         }
 
@@ -117,26 +119,15 @@ export async function PATCH(request, { params }) {
         // optional photo
         const photo = formData.get("photo");
         if (photo instanceof File && photo.size > 0) {
-            // delete old file if exists
-            if (job.thumbnailUrl) {
-                const oldPath = path.join(
-                    process.cwd(),
-                    "public",
-                    job.thumbnailUrl
-                );
-                try {
-                    await unlink(oldPath);
-                } catch (_) {}
-            }
+            // upload new photo
+            const uploaded = await uploadFileToSupabase({
+                file: photo,
+                folder: "jobs",
+                fileBaseName: `${job.companyName}-intern`,
+                contentTypeFallback: "image/jpeg",
+            });
 
-            const bytes = await photo.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-            const safeName = photo.name.replace(/\s/g, "_");
-            const fileName = `${uuidv4()}-${safeName}`;
-            const filePath = path.join(UPLOADS_DIR, fileName);
-
-            await writeFile(filePath, buffer);
-            job.thumbnailUrl = `/uploads/${fileName}`;
+            job.thumbnailUrl = uploaded.publicUrl;
         }
 
         await job.save();
@@ -149,6 +140,6 @@ export async function PATCH(request, { params }) {
 
     return new Response(
         JSON.stringify({ error: "Unsupported content type." }),
-        { status: 415 }
+        { status: 415, headers: { contentType: "application/json" } }
     );
 }

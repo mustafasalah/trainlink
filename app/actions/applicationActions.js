@@ -3,13 +3,12 @@
 import mongoose from "mongoose";
 import Application from "../models/Application";
 import Job from "../models/Job";
-import path from "path";
-import { writeFile, unlink } from "fs/promises";
-import { v4 as uuidv4 } from "uuid";
 import connectDB from "../DBconnection";
 import { getAuthUser } from "../auth";
-
-const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+import {
+    uploadFileToSupabase,
+    removeFromSupabase,
+} from "@/app/lib/supabaseStorage";
 
 export async function applyForJob(formData) {
     await connectDB();
@@ -54,54 +53,34 @@ export async function applyForJob(formData) {
         };
     }
 
-    let resumeUrl = "";
-    let coverLetterUrl = "";
+    // 1) Upload files to Supabase first
+    let resume = null;
+    let cover = null;
 
     try {
-        // Upload Resume
-        if (!(resumeFile instanceof File) || resumeFile.size === 0) {
-            return {
-                success: false,
-                message: "Resume file is missing or invalid.",
-            };
-        }
+        resume = await uploadFileToSupabase({
+            file: resumeFile,
+            folder: "applications/resumes",
+            fileBaseName: `${studentId}-${jobId}-resume`,
+            contentTypeFallback: "application/pdf",
+        });
 
-        const resumeBytes = await resumeFile.arrayBuffer();
-        const resumeBuffer = Buffer.from(resumeBytes);
-        const resumeFileName = `${uuidv4()}-${resumeFile.name.replace(
-            /\s/g,
-            "_"
-        )}`;
-        await writeFile(path.join(UPLOADS_DIR, resumeFileName), resumeBuffer);
-        resumeUrl = `/uploads/${resumeFileName}`;
-
-        // Upload Cover Letter
-        if (!(coverLetterFile instanceof File) || coverLetterFile.size === 0) {
-            // cleanup resume if cover missing
-            await unlink(path.join(process.cwd(), "public", resumeUrl));
-            return {
-                success: false,
-                message: "Cover letter file is missing or invalid.",
-            };
-        }
-
-        const clBytes = await coverLetterFile.arrayBuffer();
-        const clBuffer = Buffer.from(clBytes);
-        const clFileName = `${uuidv4()}-${coverLetterFile.name.replace(
-            /\s/g,
-            "_"
-        )}`;
-        await writeFile(path.join(UPLOADS_DIR, clFileName), clBuffer);
-        coverLetterUrl = `/uploads/${clFileName}`;
+        cover = await uploadFileToSupabase({
+            file: coverLetterFile,
+            folder: "applications/coverletters",
+            fileBaseName: `${studentId}-${jobId}-coverletter`,
+            contentTypeFallback: "application/pdf",
+        });
     } catch (uploadError) {
-        console.error("File upload failed:", uploadError);
+        console.error("Supabase upload failed:", uploadError);
+        await removeFromSupabase([resume?.storagePath, cover?.storagePath]);
         return {
             success: false,
             message: "File upload failed. Please try again.",
         };
     }
 
-    // Transaction: create application + increment counter
+    // 2) Transaction: create application + increment counter
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -114,8 +93,8 @@ export async function applyForJob(formData) {
                     applicationDate: new Date(),
                     status: "Pending",
                     acceptedByAdmin: false,
-                    resumeUrl,
-                    coverLetterUrl,
+                    resumeUrl: resume.publicUrl,
+                    coverLetterUrl: cover.publicUrl,
                     notes: "",
                 },
             ],
@@ -143,15 +122,8 @@ export async function applyForJob(formData) {
 
         console.error("Error saving application to DB:", dbError);
 
-        //  cleanup uploaded files if DB fails
-        try {
-            if (resumeUrl)
-                await unlink(path.join(process.cwd(), "public", resumeUrl));
-            if (coverLetterUrl)
-                await unlink(
-                    path.join(process.cwd(), "public", coverLetterUrl)
-                );
-        } catch (_) {}
+        // cleanup uploaded files if DB fails
+        await removeFromSupabase([resume?.storagePath, cover?.storagePath]);
 
         return {
             success: false,
