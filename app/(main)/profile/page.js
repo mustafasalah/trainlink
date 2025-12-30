@@ -38,7 +38,7 @@ export default async function page({ params }) {
                 <div className="student-profile">
                     <div className="student">
                         <h3>My Profile</h3>
-                        <EditProfileSection user={user} />
+                        <EditProfileSection user={user} company={company} />
                     </div>
                     <CompanyProfile
                         company={company}

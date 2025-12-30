@@ -4,71 +4,148 @@ import React, { useCallback, useState } from "react";
 import Modal from "./Modal";
 import { getAuthToken } from "../auth";
 
-export default function EditProfileSection({ user }) {
-    const [email, setEmail] = useState(user.email);
-    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
+export default function EditProfileSection({ user, company = null }) {
+    // Common fields (User)
+    const [email, setEmail] = useState(user.email || "");
+    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
+
+    // Student-only
     const [skills, setSkills] = useState(user.academic?.skills || "");
 
+    // Company-only (Company model)
+    const [website, setWebsite] = useState(company?.website || "");
+
+    // Password states
     const [oldPass, setOldPass] = useState("");
     const [newPass, setNewPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
 
+    // Modals
     const [showEditModal, changeShowEditModal] = useState(false);
     const [showPassowrdModal, changeShowPasswordModal] = useState(false);
+
+    // UPDATE PROFILE (Student OR Company)
     const onEditClicked = useCallback(async () => {
-        await fetch("http://localhost:3000/api/users/" + user.id, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, phoneNumber, skills }),
-        });
-        alert("Your Profile Info has been updated successfully!");
-        window.location.reload();
-    }, [showEditModal, email, phoneNumber, skills]);
-    const onEditPasswordClicked = useCallback(async () => {
-        const response = await fetch(
-            "http://localhost:3000/api/change-password",
-            {
-                method: "POST",
+        try {
+            // Company: update User + Company together
+            if (user.role === "Company") {
+                const res = await fetch(
+                    "http://localhost:3000/api/profile/company",
+                    {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "auth-token": await getAuthToken(),
+                        },
+                        body: JSON.stringify({
+                            email,
+                            phoneNumber,
+                            website,
+                        }),
+                    }
+                );
+
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch (_) {}
+
+                if (!res.ok) {
+                    alert(data?.error || "Failed to update company profile.");
+                    return;
+                }
+
+                alert(
+                    "Your Company Profile Info has been updated successfully!"
+                );
+                window.location.reload();
+                return;
+            }
+
+            // ✅ Student (or other roles): update User only
+            const res = await fetch("http://localhost:3000/api/profile/user", {
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                     "auth-token": await getAuthToken(),
                 },
-                body: JSON.stringify({ oldPass, newPass, confirmPass }),
-            }
-        );
+                body: JSON.stringify({
+                    email,
+                    phoneNumber,
+                    skills,
+                }),
+            });
 
-        alert(await response.text());
-        if (response.status === 200)
-            changeShowPasswordModal(!showPassowrdModal);
-    }, [showPassowrdModal, oldPass, newPass, confirmPass]);
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (_) {}
+
+            if (!res.ok) {
+                alert(data?.error || "Failed to update profile.");
+                return;
+            }
+
+            alert("Your Profile Info has been updated successfully!");
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong while updating profile.");
+        }
+    }, [user.role, email, phoneNumber, skills, website]);
+
+    const onEditPasswordClicked = useCallback(async () => {
+        try {
+            const response = await fetch(
+                "http://localhost:3000/api/change-password",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "auth-token": await getAuthToken(),
+                    },
+                    body: JSON.stringify({ oldPass, newPass, confirmPass }),
+                }
+            );
+
+            const msg = await response.text();
+            alert(msg);
+
+            if (response.status === 200) {
+                changeShowPasswordModal(false);
+                setOldPass("");
+                setNewPass("");
+                setConfirmPass("");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong while changing password.");
+        }
+    }, [oldPass, newPass, confirmPass]);
 
     return (
         <>
             <div className="buttons">
-                <button onClick={() => changeShowEditModal(!showEditModal)}>
+                <button onClick={() => changeShowEditModal(true)}>
                     Edit Profile
                 </button>{" "}
-                <button
-                    onClick={() => changeShowPasswordModal(!showPassowrdModal)}
-                >
+                <button onClick={() => changeShowPasswordModal(true)}>
                     Change Password
                 </button>
             </div>
+
+            {/* PASSWORD MODAL */}
             <Modal
                 title="Change My Password"
                 show={showPassowrdModal}
                 className="password-form-modal"
-                onClose={() => changeShowPasswordModal(!showPassowrdModal)}
+                onClose={() => changeShowPasswordModal(false)}
             >
                 <div className="old-pass">
                     <h3>Old Password</h3>
                     <input
                         type="password"
-                        onChange={({ target: { value } }) => {
-                            setOldPass(value);
-                        }}
+                        onChange={({ target: { value } }) => setOldPass(value)}
                         value={oldPass}
                     />
                 </div>
@@ -77,40 +154,41 @@ export default function EditProfileSection({ user }) {
                         <h3>New Password</h3>
                         <input
                             type="password"
-                            onChange={({ target: { value } }) => {
-                                setNewPass(value);
-                            }}
+                            onChange={({ target: { value } }) =>
+                                setNewPass(value)
+                            }
                             value={newPass}
                         />
                     </div>
+
                     <div className="co-pass">
                         <h3>Confirm New Password</h3>
                         <input
                             type="password"
-                            onChange={({ target: { value } }) => {
-                                setConfirmPass(value);
-                            }}
+                            onChange={({ target: { value } }) =>
+                                setConfirmPass(value)
+                            }
                             value={confirmPass}
                         />
                     </div>
                 </div>
-                <button
-                    className="change"
-                    onClick={() => {
-                        onEditPasswordClicked();
-                    }}
-                >
+                <button className="change" onClick={onEditPasswordClicked}>
                     Change
                 </button>{" "}
-                <button className="cancel" onClick={onEditPasswordClicked}>
+                <button
+                    className="cancel"
+                    onClick={() => changeShowPasswordModal(false)}
+                >
                     Cancel
                 </button>
             </Modal>
+
+            {/* EDIT PROFILE MODAL */}
             <Modal
                 title="Edit My Profile"
                 show={showEditModal}
                 className="edit-form-modal"
-                onClose={() => changeShowEditModal(!showEditModal)}
+                onClose={() => changeShowEditModal(false)}
             >
                 <div
                     className="student-name"
@@ -129,7 +207,11 @@ export default function EditProfileSection({ user }) {
                 {user.role === "Student" ? (
                     <div className="student-id">
                         <h3>Student ID</h3>
-                        <input type="text" value={user.studentId} readOnly />
+                        <input
+                            type="text"
+                            value={user.studentId || ""}
+                            readOnly
+                        />
                     </div>
                 ) : (
                     ""
@@ -138,9 +220,7 @@ export default function EditProfileSection({ user }) {
                     <h3>Email</h3>
                     <input
                         type="email"
-                        onChange={({ target: { value } }) => {
-                            setEmail(value);
-                        }}
+                        onChange={({ target: { value } }) => setEmail(value)}
                         value={email}
                     />
                 </div>
@@ -148,20 +228,38 @@ export default function EditProfileSection({ user }) {
                     <h3>Phone Number</h3>
                     <input
                         type="text"
-                        onChange={({ target: { value } }) => {
-                            setPhoneNumber(value);
-                        }}
+                        onChange={({ target: { value } }) =>
+                            setPhoneNumber(value)
+                        }
                         value={phoneNumber}
                     />
                 </div>
+                {/* Company-only Website */}
+                {user.role === "Company" ? (
+                    <div className="website email" style={{ width: "100%" }}>
+                        <h3>Website</h3>
+                        <input
+                            type="text"
+                            onChange={({ target: { value } }) =>
+                                setWebsite(value)
+                            }
+                            value={website}
+                            placeholder="https://example.com"
+                            style={{ width: "100%" }}
+                        />
+                    </div>
+                ) : (
+                    ""
+                )}
+                {/* Student-only Skills */}
                 {user.role === "Student" ? (
                     <div className="skills">
                         <h3>Skills / Interests</h3>
                         <textarea
                             name="skills"
-                            onChange={({ target: { value } }) => {
-                                setSkills(value);
-                            }}
+                            onChange={({ target: { value } }) =>
+                                setSkills(value)
+                            }
                             value={skills}
                         />
                     </div>
@@ -173,7 +271,7 @@ export default function EditProfileSection({ user }) {
                 </button>{" "}
                 <button
                     className="cancel"
-                    onClick={() => changeShowEditModal(!showEditModal)}
+                    onClick={() => changeShowEditModal(false)}
                 >
                     Cancel
                 </button>
