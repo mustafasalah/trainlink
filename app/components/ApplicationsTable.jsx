@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ApplicationRow from "./ApplicationRow";
 import useLoggedUser from "../hooks/useLoggedUser";
 import Modal from "./Modal";
@@ -21,8 +21,14 @@ export default function ApplicationsTable({ applications }) {
     const [selectedApplication, setSelectedApplication] = useState(null);
     const router = useRouter();
 
+    const selectedJob = useMemo(() => {
+        return selectedApplication?.job ?? null;
+    }, [selectedApplication]);
+
     const handleAccept = useCallback(async () => {
         try {
+            if (!selectedApplication?._id) return;
+
             if (loggedUser.role === "Admin") {
                 await acceptApplicationByAdmin(selectedApplication._id);
             } else {
@@ -34,10 +40,12 @@ export default function ApplicationsTable({ applications }) {
         } catch (err) {
             alert(err);
         }
-    }, [router, selectedApplication]);
+    }, [router, selectedApplication, loggedUser.role]);
 
     const handleReject = useCallback(async () => {
         try {
+            if (!selectedApplication?._id) return;
+
             const reason = prompt("Rejection Reason:");
             if (loggedUser.role === "Admin") {
                 await rejectApplicationByAdmin(selectedApplication._id, reason);
@@ -53,12 +61,29 @@ export default function ApplicationsTable({ applications }) {
         } catch (err) {
             alert(err);
         }
-    }, [router, selectedApplication]);
+    }, [router, selectedApplication, loggedUser.role]);
 
     const handleCloseModal = useCallback(() => {
         setSelectedApplication(null);
         setShowDetailsModal(false);
-    });
+    }, []);
+
+    const jobDeletedNotice = !selectedJob ? (
+        <div
+            style={{
+                padding: "10px",
+                borderRadius: "8px",
+                background: "#fff7ed",
+                border: "1px solid #fdba74",
+                color: "#9a3412",
+                marginBottom: "10px",
+                width: "100%",
+            }}
+        >
+            This opportunity was deleted by the company. Some details are not
+            available anymore.
+        </div>
+    ) : null;
 
     return (
         <div className="apps-form">
@@ -71,18 +96,13 @@ export default function ApplicationsTable({ applications }) {
                             ""
                         )}
                         <td>Opportunity</td>
-                        {loggedUser.role === "Admin" ? (
-                            <>
-                                <td>Company</td>
-                            </>
-                        ) : (
-                            ""
-                        )}
+                        {loggedUser.role === "Admin" ? <td>Company</td> : ""}
                         <td>Status</td>
                         <td>Application Date</td>
                         <td>Action</td>
                     </tr>
                 </thead>
+
                 <tbody>
                     {applications
                         .filter((application) => {
@@ -101,11 +121,13 @@ export default function ApplicationsTable({ applications }) {
                                 {...application}
                             />
                         ))}
+
                     {applications.length === 0
                         ? "You don't have any applications yet."
                         : ""}
                 </tbody>
             </table>
+
             <Modal
                 title="Application Details"
                 show={showDetailsModal}
@@ -113,6 +135,7 @@ export default function ApplicationsTable({ applications }) {
                 onClose={handleCloseModal}
             >
                 <>
+                    <div className="box full-width">{jobDeletedNotice}</div>
                     <div className="box">
                         <label>
                             <i className="icon-circle-user-round"></i>Student
@@ -120,10 +143,11 @@ export default function ApplicationsTable({ applications }) {
                         </label>
                         <input
                             type="text"
-                            value={selectedApplication?.student.fullName || ""}
+                            value={selectedApplication?.student?.fullName || ""}
                             readOnly
                         />
                     </div>
+
                     <div className="box">
                         <label>
                             <i className="icon-circle-user-round"></i>Student
@@ -132,21 +156,24 @@ export default function ApplicationsTable({ applications }) {
                         <input
                             type="text"
                             value={
-                                selectedApplication?.student.academic?.gpa || ""
+                                selectedApplication?.student?.academic?.gpa ||
+                                ""
                             }
                             readOnly
                         />
                     </div>
+
                     <div className="box">
                         <label>
                             <i className="icon-building-2"></i>Company Name
                         </label>
                         <input
                             type="text"
-                            value={selectedApplication?.job.companyName || ""}
+                            value={selectedJob?.companyName || "(Deleted)"}
                             readOnly
                         />
                     </div>
+
                     <div className="box">
                         <label>
                             <i className="icon-graduation-cap"></i>Opportunity
@@ -154,10 +181,11 @@ export default function ApplicationsTable({ applications }) {
                         </label>
                         <input
                             type="text"
-                            value={selectedApplication?.job.title || ""}
+                            value={selectedJob?.title || "(Deleted)"}
                             readOnly
                         />
                     </div>
+
                     <div className="box">
                         <label>
                             <i className="icon-calendar-days"></i>Application
@@ -171,6 +199,7 @@ export default function ApplicationsTable({ applications }) {
                             readOnly
                         />
                     </div>
+
                     <div className="box">
                         <label>
                             <i className="icon-circle-dashed"></i>Application
@@ -182,6 +211,7 @@ export default function ApplicationsTable({ applications }) {
                             readOnly
                         />
                     </div>
+
                     <div className="box">
                         <label>
                             <i className="icon-file-badge"></i>Student Resume
@@ -190,14 +220,18 @@ export default function ApplicationsTable({ applications }) {
                             <span>
                                 {getFilename(selectedApplication?.resumeUrl)}
                             </span>
-                            <Link
-                                className="button"
-                                style={{ color: "#fff" }}
-                                href={selectedApplication?.resumeUrl || ""}
-                                target="_blank"
-                            >
-                                Download
-                            </Link>
+                            {selectedApplication?.resumeUrl ? (
+                                <Link
+                                    className="button"
+                                    style={{ color: "#fff" }}
+                                    href={selectedApplication.resumeUrl}
+                                    target="_blank"
+                                >
+                                    Download
+                                </Link>
+                            ) : (
+                                <span style={{ color: "#6b7280" }}>—</span>
+                            )}
                         </div>
                     </div>
 
@@ -211,14 +245,18 @@ export default function ApplicationsTable({ applications }) {
                                     selectedApplication?.coverLetterUrl
                                 )}
                             </span>
-                            <Link
-                                className="button"
-                                style={{ color: "#fff" }}
-                                href={selectedApplication?.coverLetterUrl || ""}
-                                target="_blank"
-                            >
-                                Download
-                            </Link>
+                            {selectedApplication?.coverLetterUrl ? (
+                                <Link
+                                    className="button"
+                                    style={{ color: "#fff" }}
+                                    href={selectedApplication.coverLetterUrl}
+                                    target="_blank"
+                                >
+                                    Download
+                                </Link>
+                            ) : (
+                                <span style={{ color: "#6b7280" }}>—</span>
+                            )}
                         </div>
                     </div>
 
@@ -250,26 +288,27 @@ export default function ApplicationsTable({ applications }) {
                     ) : (
                         ""
                     )}
+
                     {selectedApplication?.status === "Rejected" &&
                     selectedApplication?.notes ? (
                         <div className="box full-width">
-                            <label htmlFor="reason">
-                                Reason for Rejection{" "}
-                            </label>
+                            <label htmlFor="reason">Reason for Rejection</label>
                             <textarea
                                 name="reason"
                                 id="reason"
                                 value={selectedApplication.notes}
+                                readOnly
                             />
                         </div>
                     ) : (
                         ""
                     )}
+
                     {!/^(Student|ERO)$/.test(loggedUser.role) ? (
                         <>
                             {!selectedApplication?.acceptedByAdmin ||
                             (loggedUser.role === "Company" &&
-                                selectedApplication.status === "Pending") ? (
+                                selectedApplication?.status === "Pending") ? (
                                 <button
                                     className="submet"
                                     onClick={handleAccept}
@@ -304,7 +343,7 @@ function canFinish(loggedUser, application) {
     return (
         loggedUser.role === "Company" &&
         application?.acceptedByAdmin &&
-        application.status === "Accepted" &&
+        application?.status === "Accepted" &&
         application?.internshipStatus === "Ongoing"
     );
 }

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Applications({ searchParams }) {
     const loggedUser = await getAuthUser();
-    const q = (searchParams?.q || "").trim();
+    const q = ((await searchParams)?.q || "").trim();
 
     const qs = new URLSearchParams();
     if (q) qs.set("q", q);
