@@ -25,7 +25,7 @@ export default async function Home() {
         },
         next: { tags: ["jobs"] },
     });
-    const jobs = await data.json();
+    const jobs = (await data.json()).reverse();
 
     if (loggedUser.role === "Company") {
         return (
@@ -42,37 +42,6 @@ export default async function Home() {
 
     return (
         <div className="content">
-            {loggedUser.role === "Student" ? (
-                <div className="progress-card">
-                    <div className="progress-info">
-                        <span className="your-progress">
-                            <i className="icon-trending-up"></i>your progress
-                        </span>
-                        <div className="progress-line">
-                            <div className="progress">
-                                <span></span>
-                            </div>
-                            <span>
-                                50% complete
-                                <p>
-                                    <i className="icon-dot"></i>4 weeks left
-                                </p>
-                            </span>
-                        </div>
-                        <h2>UI / UX Designer</h2>
-                    </div>
-                    <div className="progress-img">
-                        <Image
-                            src="/img/Group 2.svg"
-                            alt=""
-                            width={280}
-                            height={120}
-                        />
-                    </div>
-                </div>
-            ) : (
-                ""
-            )}
             <div className="available">
                 {loggedUser.role === "Student" ? (
                     <>

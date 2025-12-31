@@ -62,7 +62,7 @@ export default function EditProfileSection({ user, company = null }) {
                 return;
             }
 
-            // ✅ Student (or other roles): update User only
+            // Student (or other roles): update User only
             const res = await fetch("http://localhost:3000/api/profile/user", {
                 method: "PATCH",
                 headers: {
