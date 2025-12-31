@@ -57,7 +57,7 @@ export default function StudentBar() {
                     </li>
                 </ul>
             </div>
-            {loggedUser.role === "Student" ? (
+            {/* {loggedUser.role === "Student" ? (
                 <div className="certificate">
                     <p>My Certificate</p>
                     {loggedUser.certifications.map(({ title }) => (
@@ -74,7 +74,7 @@ export default function StudentBar() {
                 </div>
             ) : (
                 ""
-            )}
+            )} */}
         </div>
     );
 }

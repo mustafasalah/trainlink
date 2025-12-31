@@ -149,7 +149,7 @@ export default async function page({ params }) {
                                     )}
                                 </ul>
                             </div>
-                            <div className="my-certification">
+                            {/* <div className="my-certification">
                                 <h3>My Certifications</h3>
                                 {user.certifications.map((certification) => (
                                     <Certification
@@ -157,7 +157,7 @@ export default async function page({ params }) {
                                         info={certification}
                                     />
                                 ))}
-                            </div>
+                            </div> */}
                         </>
                     ) : (
                         ""
