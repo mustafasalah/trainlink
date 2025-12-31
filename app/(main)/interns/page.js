@@ -21,11 +21,16 @@ export default async function page() {
     });
     const internships = await internshipsData.json();
     const jobs = await jobsData.json();
+
+    const jobIdsAlreadyInInternships = new Set(
+        internships
+            .map((i) => i?.application?.job?._id)
+            .filter(Boolean)
+            .map(String)
+    );
+
     const availableJobs = jobs.filter(
-        (job) =>
-            !internships.some(
-                ({ application }) => application.job._id === job._id
-            )
+        (job) => !jobIdsAlreadyInInternships.has(String(job._id))
     );
 
     return (

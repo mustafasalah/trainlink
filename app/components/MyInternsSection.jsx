@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import JobCard from "./JobCard";
 import useLoggedUser from "../hooks/useLoggedUser";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 
 export default function MyInternsSection({
-    internships,
+    internships = [],
     tabs = ["Ongoing", "Finished"],
 }) {
     const [filter, changeFilter] = useState(null);
@@ -25,6 +25,7 @@ export default function MyInternsSection({
 
     // open edit
     const handleOpenEdit = useCallback((job) => {
+        if (!job?._id) return;
         setSelectedJob(job);
         setShowEditModal(true);
     }, []);
@@ -34,7 +35,42 @@ export default function MyInternsSection({
         setSelectedJob(null);
     }, []);
 
+    // ---------------------------
+    // SAFE FILTERED LISTS
+    // ---------------------------
+    const safeInternships = useMemo(() => {
+        // Remove broken items:
+        // - Student internships might have application or job deleted => application/job null
+        // - Company internships here are jobs, so should have _id
+        return Array.isArray(internships) ? internships.filter(Boolean) : [];
+    }, [internships]);
+
+    const filteredStudentInternships = useMemo(() => {
+        // Each item: { application: { job }, status }
+        // job might be null if deleted
+        return safeInternships
+            .filter((it) => it?.application?.job?._id) // keep only ones with job
+            .filter((it) => {
+                if (filter === null) return true;
+                const st = (it?.status || "").toLowerCase();
+                return st === filter;
+            });
+    }, [safeInternships, filter]);
+
+    const filteredCompanyJobs = useMemo(() => {
+        // Each item is a Job document in your current code
+        return safeInternships.filter((job) => {
+            if (!job?._id) return false;
+            if (filter === null) return true;
+
+            const st = (job?.status || "").toLowerCase();
+            return st === filter;
+        });
+    }, [safeInternships, filter]);
+
+    // ---------------------------
     // CREATE handler
+    // ---------------------------
     const handleCreate = useCallback(
         async (event) => {
             event.preventDefault();
@@ -52,6 +88,7 @@ export default function MyInternsSection({
                     method: "POST",
                     body: formData,
                 });
+
                 if (!res.ok) {
                     let message = "Failed to create intern.";
                     try {
@@ -74,7 +111,9 @@ export default function MyInternsSection({
         [handleCloseModal, router]
     );
 
+    // ---------------------------
     // UPDATE handler
+    // ---------------------------
     const handleUpdate = useCallback(
         async (event) => {
             event.preventDefault();
@@ -122,27 +161,31 @@ export default function MyInternsSection({
             <div className="head-title">
                 <div className="tabs">
                     <button
+                        type="button"
                         className={filter === null ? "active" : ""}
                         onClick={() => changeFilter(null)}
                     >
                         All
                     </button>
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            className={
-                                filter === tab.toLowerCase() ? "active" : ""
-                            }
-                            onClick={() => changeFilter(tab.toLowerCase())}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+
+                    {tabs.map((tab) => {
+                        const tabValue = tab.toLowerCase();
+                        return (
+                            <button
+                                type="button"
+                                key={tab}
+                                className={filter === tabValue ? "active" : ""}
+                                onClick={() => changeFilter(tabValue)}
+                            >
+                                {tab}
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {loggedUser.role === "Company" && (
                     <div className="buttons">
-                        <button onClick={handleOpenModal}>
+                        <button type="button" onClick={handleOpenModal}>
                             Add New Intern
                         </button>
                     </div>
@@ -151,32 +194,45 @@ export default function MyInternsSection({
 
             {/* cards */}
             <div className="interns-cards">
-                {loggedUser.role === "Student"
-                    ? internships
-                          .filter(({ status }) => {
-                              if (filter === null) return true;
-                              return (status || "").toLowerCase() === filter;
-                          })
-                          .reverse()
-                          .map(({ application: { job }, status }) => (
-                              <JobCard
-                                  key={job._id}
-                                  job={job}
-                                  InternStatus={status}
-                              />
-                          ))
-                    : internships
-                          .filter(({ status }) =>
-                              filter === null ? true : status === filter
-                          )
-                          .reverse()
-                          .map((intern) => (
-                              <JobCard
-                                  key={intern._id}
-                                  job={intern}
-                                  onEdit={handleOpenEdit} // pass edit handler
-                              />
-                          ))}
+                {loggedUser.role === "Student" ? (
+                    <>
+                        {filteredStudentInternships
+                            .slice()
+                            .reverse()
+                            .map((it) => {
+                                const job = it.application.job; // safe due to filter
+                                return (
+                                    <JobCard
+                                        key={job._id}
+                                        job={job}
+                                        InternStatus={it.status}
+                                    />
+                                );
+                            })}
+
+                        {/* in case all were deleted */}
+                        {safeInternships.length > 0 &&
+                        filteredStudentInternships.length === 0 ? (
+                            <p style={{ marginTop: 10 }}>
+                                No internships match this filter (some jobs may
+                                have been deleted).
+                            </p>
+                        ) : null}
+                    </>
+                ) : (
+                    <>
+                        {filteredCompanyJobs
+                            .slice()
+                            .reverse()
+                            .map((intern) => (
+                                <JobCard
+                                    key={intern._id}
+                                    job={intern}
+                                    onEdit={handleOpenEdit}
+                                />
+                            ))}
+                    </>
+                )}
             </div>
 
             {/* CREATE MODAL */}
@@ -336,7 +392,6 @@ export default function MyInternsSection({
                             <div className="intern-img">
                                 <h4>Intern Poster Image (optional)</h4>
 
-                                {/* show current thumbnail */}
                                 {selectedJob.thumbnailUrl && (
                                     <div style={{ marginBottom: 8 }}>
                                         <img
@@ -382,11 +437,13 @@ export default function MyInternsSection({
                                     <input
                                         type="date"
                                         name="deadline"
-                                        defaultValue={new Date(
+                                        defaultValue={
                                             selectedJob.deadline
-                                        )
-                                            .toISOString()
-                                            .slice(0, 10)}
+                                                ? new Date(selectedJob.deadline)
+                                                      .toISOString()
+                                                      .slice(0, 10)
+                                                : ""
+                                        }
                                         required
                                     />
                                 </li>
