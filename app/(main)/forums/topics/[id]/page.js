@@ -2,12 +2,15 @@ import React from "react";
 import connectDB from "@/app/DBconnection";
 import ForumTopic from "@/app/models/ForumTopic";
 import ForumReply from "@/app/models/ForumReply";
-import User from "@/app/models/User"; // <── ADD THIS
-import { format } from "timeago.js";
+import User from "@/app/models/User";
 import ReplyForm from "@/app/components/ReplyForm";
+import ReplyItem from "@/app/components/ReplyItem";
+import { getAuthUser } from "@/app/auth";
 
 export default async function TopicPage({ params }) {
     const { id } = await params;
+
+    const loggedUser = await getAuthUser(true);
 
     await connectDB();
 
@@ -20,12 +23,10 @@ export default async function TopicPage({ params }) {
         );
     }
 
-    // Fetch replies first
     const replies = await ForumReply.find({ topicId: id })
         .sort({ createdAt: 1 })
         .lean();
 
-    // Fetch avatar for each reply
     const repliesWithAvatar = await Promise.all(
         replies.map(async (reply) => {
             const user = await User.findById(reply.authorId).lean();
@@ -40,6 +41,10 @@ export default async function TopicPage({ params }) {
         .toISOString()
         .slice(0, 19)
         .replace("T", " ");
+
+    const isAdmin = loggedUser?.role === "Admin";
+    const isTopicOwner =
+        loggedUser?.id?.toString() === topic.authorId?.toString();
 
     return (
         <div className="content">
@@ -76,23 +81,25 @@ export default async function TopicPage({ params }) {
                         {repliesWithAvatar.length === 0 ? (
                             <p>No replies yet. Be the first to reply.</p>
                         ) : (
-                            repliesWithAvatar.map((reply) => (
-                                <div
-                                    className="reply-box"
-                                    key={reply._id.toString()}
-                                >
-                                    <img src={reply.authorAvatar} alt="" />
-                                    <div className="box">
-                                        <div className="name-time-disc">
-                                            <span>{reply.authorName}</span>
-                                            <p>{format(reply.createdAt)}</p>
-                                        </div>
-                                        <div className="disc-box">
-                                            <p>{reply.message}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
+                            repliesWithAvatar.map((reply) => {
+                                const isReplyOwner =
+                                    loggedUser?.id?.toString() ===
+                                    reply.authorId?.toString();
+
+                                const canDelete =
+                                    isAdmin || isTopicOwner || isReplyOwner;
+
+                                return (
+                                    <ReplyItem
+                                        key={reply._id.toString()}
+                                        reply={{
+                                            ...reply,
+                                            _id: reply._id.toString(),
+                                        }}
+                                        canDelete={canDelete}
+                                    />
+                                );
+                            })
                         )}
                     </div>
                 </div>
