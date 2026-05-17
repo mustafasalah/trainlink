@@ -23,18 +23,11 @@ export async function loginAction(prevState, formData) {
     await connectDB(); // Connect to the database
 
     try {
-        let user = null;
-
         // Attempt to find user by username or studentId
         // Assuming 'identifier' can be either username for non-students or studentId for students
-        user = await User.findOne({ username: identifier }).select("+password");
-
-        if (!user) {
-            // If not found by username, try to find by studentId
-            user = await User.findOne({ studentId: identifier }).select(
-                "+password"
-            );
-        }
+        const user = await User.findOne({
+            $or: [{ username: identifier }, { studentId: identifier }],
+        }).select("+password");
 
         if (!user) {
             return {

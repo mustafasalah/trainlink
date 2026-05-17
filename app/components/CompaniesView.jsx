@@ -65,7 +65,7 @@ export default function CompaniesView({ companies }) {
             await createCompanyAndOwner(
                 companyData,
                 userData,
-                formData.get("photo")
+                formData.get("photo"),
             );
         } catch (err) {
             console.log(err);
@@ -128,7 +128,7 @@ export default function CompaniesView({ companies }) {
                         <input
                             type="file"
                             name="photo"
-                            accept=".jpeg,.jpg,.png"
+                            accept=".jpeg,.jpg,.png,.webp"
                             required
                         />
                     </div>
@@ -276,23 +276,34 @@ export default function CompaniesView({ companies }) {
                         <label htmlFor="agreement-renewal-type">
                             Renewal Type
                         </label>
-                        <input
-                            type="text"
+                        <select
                             id="agreement-renewal-type"
                             name="agreement.renewal_type"
-                            placeholder="e.g., Automatic, Manual"
                             required
-                        />
+                            defaultValue=""
+                        >
+                            <option value="" disabled>
+                                Select renewal type
+                            </option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
                     </div>
+
                     <div className="box">
                         <label htmlFor="agreement-nature">Nature</label>
-                        <input
-                            type="text"
+                        <select
                             id="agreement-nature"
                             name="agreement.nature"
-                            placeholder="e.g., Exclusive, Non-exclusive"
                             required
-                        />
+                            defaultValue=""
+                        >
+                            <option value="" disabled>
+                                Select nature
+                            </option>
+                            <option value="Exclusive">Exclusive</option>
+                            <option value="Non-exclusive">Non-exclusive</option>
+                        </select>
                     </div>
 
                     <button

@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import ApplySection from "@/app/components/ApplySection";
 import { getAuthToken, getAuthUser } from "@/app/auth";
+import BackButton from "@/app/components/BackButton";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function InternDetails({ params }) {
     const job = await jobData.json();
 
     const companyData = await fetch(
-        `http://localhost:3000/api/companies/${job.companyId}`
+        `http://localhost:3000/api/companies/${job.companyId}`,
     );
     const company = await companyData.json();
     const loggedUser = await getAuthUser();
@@ -119,7 +120,7 @@ export default async function InternDetails({ params }) {
                     loggedUser?.academic.registered &&
                     (await canJoinIntern(job._id)) ? (
                         <ApplySection job={job} company={company} />
-                    ) : (
+                    ) : loggedUser.role === "Student" ? (
                         <p
                             style={{
                                 padding: 16,
@@ -130,6 +131,8 @@ export default async function InternDetails({ params }) {
                         >
                             You must be registered first to apply
                         </p>
+                    ) : (
+                        <BackButton />
                     )}
                 </div>
             </div>
@@ -147,7 +150,7 @@ const canJoinIntern = async (jobId) => {
 
     return (
         applications.findIndex(
-            ({ job, status }) => job._id === jobId && status !== "Rejected"
+            ({ job, status }) => job._id === jobId && status !== "Rejected",
         ) === -1
     );
 };

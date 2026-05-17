@@ -13,12 +13,18 @@ export default function StudentBar() {
     return (
         <div className="student-bar">
             <div className="profile">
-                <Image
-                    src={loggedUser.profileImage}
-                    alt=""
-                    width={70}
-                    height={70}
-                />
+                {loggedUser.profileImage ? (
+                    <Image
+                        src={loggedUser.profileImage}
+                        alt=""
+                        width={70}
+                        height={70}
+                    />
+                ) : (
+                    <h2 className={loggedUser.role}>
+                        {loggedUser.fullName.substring(0, 1).toUpperCase()}
+                    </h2>
+                )}
                 <h4>{loggedUser.fullName}</h4>
                 <span>{loggedUser.specialization}</span>
                 <p>

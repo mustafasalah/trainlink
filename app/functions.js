@@ -36,5 +36,5 @@ export function addPeriodToDate(baseDate, period) {
 
 export function summarize(text) {
     if (typeof text !== "string") return "";
-    return text.length > 120 ? text.slice(0, 120) + "..." : text;
+    return text.length > 110 ? text.slice(0, 110) + "..." : text;
 }

@@ -9,6 +9,8 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
     const loggedUser = await getAuthUser();
 
+    if (!loggedUser) return null;
+
     if (loggedUser.role === "ERO") {
         const data = await fetch("http://localhost:3000/api/companies");
         const companies = await data.json();
@@ -50,6 +52,9 @@ export default async function Home() {
                             {jobs.slice(0, 3).map((job) => (
                                 <JobCard key={job._id} job={job} />
                             ))}
+                            {jobs.length === 0
+                                ? "There are no Job Opportunities"
+                                : ""}
                         </div>
                     </>
                 ) : (
@@ -59,18 +64,27 @@ export default async function Home() {
                             {jobs.map((job) => (
                                 <JobCard key={job._id} job={job} />
                             ))}
+                            {jobs.length === 0
+                                ? "There are no Job Opportunities"
+                                : ""}
                         </div>
                     </>
                 )}
             </div>
             {loggedUser.role === "Student" ? (
                 <div className="recommend">
-                    <h3>Recommended for you</h3>
-                    <div className="cards">
-                        {jobs.slice(3).map((job) => (
-                            <JobCard key={job._id} job={job} />
-                        ))}
-                    </div>
+                    {jobs.slice(3).length === 0 ? (
+                        ""
+                    ) : (
+                        <>
+                            <h3>Recommended for you</h3>
+                            <div className="cards">
+                                {jobs.slice(3).map((job) => (
+                                    <JobCard key={job._id} job={job} />
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             ) : (
                 ""
