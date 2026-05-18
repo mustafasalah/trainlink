@@ -9,7 +9,7 @@ import {
 export async function GET(request, { params }) {
     await connectDB();
 
-    const jobId = params.id;
+    const jobId = (await params).id;
     const job = await Job.findById(jobId).lean();
 
     if (job) {
@@ -41,7 +41,7 @@ export async function PATCH(request, { params }) {
     if (!job) {
         return new Response(
             JSON.stringify({ error: "Internship not found." }),
-            { status: 404, headers: { contentType: "application/json" } }
+            { status: 404, headers: { contentType: "application/json" } },
         );
     }
 
@@ -67,7 +67,7 @@ export async function PATCH(request, { params }) {
 
             return new Response(
                 JSON.stringify({ ok: true, status: job.status }),
-                { status: 200, headers: { contentType: "application/json" } }
+                { status: 200, headers: { contentType: "application/json" } },
             );
         }
 
@@ -104,7 +104,7 @@ export async function PATCH(request, { params }) {
         ) {
             return new Response(
                 JSON.stringify({ error: "Missing required fields." }),
-                { status: 400, headers: { contentType: "application/json" } }
+                { status: 400, headers: { contentType: "application/json" } },
             );
         }
 
@@ -140,6 +140,6 @@ export async function PATCH(request, { params }) {
 
     return new Response(
         JSON.stringify({ error: "Unsupported content type." }),
-        { status: 415, headers: { contentType: "application/json" } }
+        { status: 415, headers: { contentType: "application/json" } },
     );
 }

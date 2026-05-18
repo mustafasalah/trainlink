@@ -19,6 +19,9 @@ export default async function InternDetails({ params }) {
     const company = await companyData.json();
     const loggedUser = await getAuthUser();
 
+    const isRegistered = loggedUser?.academic?.registered;
+    const canApply = await canJoinIntern(job._id);
+
     return (
         <div className="content">
             <div className="intern-details">
@@ -116,21 +119,32 @@ export default async function InternDetails({ params }) {
                             ""
                         )}
                     </div>
-                    {loggedUser.role === "Student" &&
-                    loggedUser?.academic.registered &&
-                    (await canJoinIntern(job._id)) ? (
-                        <ApplySection job={job} company={company} />
-                    ) : loggedUser.role === "Student" ? (
-                        <p
-                            style={{
-                                padding: 16,
-                                color: "red",
-                                fontWeight: 500,
-                                textAlign: "center",
-                            }}
-                        >
-                            You must be registered first to apply
-                        </p>
+                    {loggedUser.role === "Student" ? (
+                        !isRegistered ? (
+                            <p
+                                style={{
+                                    padding: 16,
+                                    color: "red",
+                                    fontWeight: 500,
+                                    textAlign: "center",
+                                }}
+                            >
+                                You must be registered first to apply
+                            </p>
+                        ) : canApply ? (
+                            <ApplySection job={job} company={company} />
+                        ) : (
+                            <p
+                                style={{
+                                    padding: 16,
+                                    color: "red",
+                                    fontWeight: 500,
+                                    textAlign: "center",
+                                }}
+                            >
+                                You have already applied for this internship
+                            </p>
+                        )
                     ) : (
                         <BackButton />
                     )}
