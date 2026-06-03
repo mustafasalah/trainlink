@@ -49,7 +49,7 @@ export default async function Home() {
                     <>
                         <h3>Newest Opportunities</h3>
                         <div className="cards">
-                            {jobs.slice(0, 3).map((job) => (
+                            {jobs.slice(0, 6).map((job) => (
                                 <JobCard key={job._id} job={job} />
                             ))}
                             {jobs.length === 0
@@ -71,7 +71,7 @@ export default async function Home() {
                     </>
                 )}
             </div>
-            {loggedUser.role === "Student" ? (
+            {/* {loggedUser.role === "Student" ? (
                 <div className="recommend">
                     {jobs.slice(3).length === 0 ? (
                         ""
@@ -88,7 +88,7 @@ export default async function Home() {
                 </div>
             ) : (
                 ""
-            )}
+            )} */}
         </div>
     );
 }
