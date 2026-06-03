@@ -26,7 +26,7 @@ export default function StudentBar() {
                     </h2>
                 )}
                 <h4>{loggedUser.fullName}</h4>
-                <span>{loggedUser.specialization}</span>
+                {/* <span>{loggedUser.specialization}</span> */}
                 <p>
                     {" "}
                     <span>{loggedUser.role} Account</span>
