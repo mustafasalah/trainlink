@@ -68,7 +68,7 @@ export default function Sidebar() {
                 ) : (
                     ""
                 )}
-                {loggedUser.role === "Admin" ? (
+                {loggedUser.role === "Admin" ? (<>
                     <li>
                         <Link
                             className={
@@ -79,10 +79,19 @@ export default function Sidebar() {
                             <i className="icon-users"></i>
                             <span>Students</span>
                         </Link>
-                    </li>
+                    </li><li>
+                        <Link
+                            className={pathname.startsWith("/eros") ? "active" : ""}
+                            href="/eros"
+                        >
+                            <i className="icon-users"></i>
+                            <span>EROs</span>
+                        </Link>
+                    </li></>
                 ) : (
                     ""
                 )}
+
                 {/* <li>
                     <Link
                         className={

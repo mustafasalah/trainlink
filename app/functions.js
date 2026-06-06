@@ -3,9 +3,17 @@ export function getFilename(path) {
     return path.substring(path.lastIndexOf("/") + 1);
 }
 
-export function formatDate(date) {
-    if (typeof date !== "string") return "";
-    return new Date(date).toLocaleDateString();
+export function formatDate(dateString) {
+    if (!dateString) return "-";
+
+    return new Date(dateString).toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
 }
 
 export function addPeriodToDate(baseDate, period) {

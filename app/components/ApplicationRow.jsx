@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React from "react";
 import useLoggedUser from "../hooks/useLoggedUser";
+import { formatDate } from "../functions";
 
 export default function ApplicationRow({
     _id,
@@ -66,7 +67,7 @@ export default function ApplicationRow({
                 </span>
             </td>
 
-            <td>{applicationDate}</td>
+            <td>{formatDate(applicationDate)}</td>
 
             <td>
                 <Link

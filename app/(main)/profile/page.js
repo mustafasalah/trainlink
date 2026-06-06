@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function page({ params }) {
     const loggedUser = await getAuthUser();
     const data = await fetch(
-        "http://localhost:3000/api/users/" + loggedUser.id
+        "http://localhost:3000/api/users/" + loggedUser.id,
     );
     const user = await data.json();
     user.id = user._id;
@@ -18,7 +18,7 @@ export default async function page({ params }) {
     if (user.role === "Company") {
         const companyId = user.companyId;
         const companyData = await fetch(
-            `http://localhost:3000/api/companies/${companyId}`
+            `http://localhost:3000/api/companies/${companyId}`,
         );
         const company = await companyData.json();
 
@@ -29,7 +29,7 @@ export default async function page({ params }) {
                     "auth-token": await getAuthToken(),
                 },
                 next: { tags: ["jobs"] },
-            }
+            },
         );
         const jobs = await JobData.json();
 
@@ -55,12 +55,18 @@ export default async function page({ params }) {
             <div className="student-profile">
                 <div className="student">
                     <div className="profile">
-                        <Image
-                            src={user.profileImage}
-                            alt=""
-                            width={70}
-                            height={70}
-                        />
+                        {user.profileImage ? (
+                            <Image
+                                src={user.profileImage}
+                                alt=""
+                                width={70}
+                                height={70}
+                            />
+                        ) : (
+                            <h2 className={user.role}>
+                                {user.fullName.substring(0, 1).toUpperCase()}
+                            </h2>
+                        )}
                         <div className="student-name">
                             <h3>{user.fullName}</h3>
                             <p>{user.specialization}</p>
