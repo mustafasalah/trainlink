@@ -52,7 +52,7 @@ export default function MyInternsSection({
             .filter((it) => it?.application?.job?._id) // keep only ones with job
             .filter((it) => {
                 if (filter === null) return true;
-                const st = (it?.status || "").toLowerCase();
+                const st = (it?.status || "").toLowerCase().trim();
                 return st === filter;
             });
     }, [safeInternships, filter]);
@@ -108,7 +108,7 @@ export default function MyInternsSection({
                 alert("Something went wrong while creating the intern.");
             }
         },
-        [handleCloseModal, router]
+        [handleCloseModal, router],
     );
 
     // ---------------------------
@@ -152,7 +152,7 @@ export default function MyInternsSection({
                 alert("Something went wrong while updating the internship.");
             }
         },
-        [selectedJob, handleCloseEdit, router]
+        [selectedJob, handleCloseEdit, router],
     );
 
     return (

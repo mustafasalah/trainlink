@@ -183,7 +183,7 @@ export default function CompaniesView({ companies }) {
                         const { _id, thumbnailUrl, name, about } = company;
 
                         return (
-                            <div style={{ position: "relative" }}>
+                            <div key={_id} style={{ position: "relative" }}>
                                 <Card
                                     key={_id}
                                     url={`/companies/${_id}`}
