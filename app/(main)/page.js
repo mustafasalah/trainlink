@@ -47,9 +47,9 @@ export default async function Home() {
             <div className="available">
                 {loggedUser.role === "Student" ? (
                     <>
-                        <h3>Newest Opportunities</h3>
+                        <h3>Job Opportunities</h3>
                         <div className="cards">
-                            {jobs.slice(0, 6).map((job) => (
+                            {jobs.map((job) => (
                                 <JobCard key={job._id} job={job} />
                             ))}
                             {jobs.length === 0
