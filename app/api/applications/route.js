@@ -42,15 +42,14 @@ export async function GET(request) {
             break;
 
         case "ERO":
-            return NextResponse.json(
-                { message: "Unauthorized 401." },
-                { status: 401 }
-            );
+            // ERO can view all applications as read-only
+            query = {};
+            break;
 
         default:
             return NextResponse.json(
                 { message: "Unauthorized." },
-                { status: 401 }
+                { status: 401 },
             );
     }
 
@@ -81,7 +80,7 @@ export async function GET(request) {
         .lean();
 
     const statusMap = new Map(
-        internships.map((i) => [i.application.toString(), i.status])
+        internships.map((i) => [i.application.toString(), i.status]),
     );
 
     // Attach internshipStatus

@@ -36,7 +36,7 @@ export default function Sidebar() {
                 ) : (
                     ""
                 )}
-                {/^(Admin|Student|Company)$/.test(loggedUser.role) ? (
+                {/^(Admin|Student|Company|ERO)$/.test(loggedUser.role) ? (
                     <li>
                         <Link
                             className={
@@ -68,26 +68,33 @@ export default function Sidebar() {
                 ) : (
                     ""
                 )}
-                {loggedUser.role === "Admin" ? (<>
-                    <li>
-                        <Link
-                            className={
-                                pathname.startsWith("/students") ? "active" : ""
-                            }
-                            href="/students"
-                        >
-                            <i className="icon-users"></i>
-                            <span>Students</span>
-                        </Link>
-                    </li><li>
-                        <Link
-                            className={pathname.startsWith("/eros") ? "active" : ""}
-                            href="/eros"
-                        >
-                            <i className="icon-users"></i>
-                            <span>EROs</span>
-                        </Link>
-                    </li></>
+                {loggedUser.role === "Admin" ? (
+                    <>
+                        <li>
+                            <Link
+                                className={
+                                    pathname.startsWith("/students")
+                                        ? "active"
+                                        : ""
+                                }
+                                href="/students"
+                            >
+                                <i className="icon-users"></i>
+                                <span>Students</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                className={
+                                    pathname.startsWith("/eros") ? "active" : ""
+                                }
+                                href="/eros"
+                            >
+                                <i className="icon-users"></i>
+                                <span>EROs</span>
+                            </Link>
+                        </li>
+                    </>
                 ) : (
                     ""
                 )}

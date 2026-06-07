@@ -52,7 +52,7 @@ export default function ApplicationsTable({ applications }) {
             } else {
                 await rejectApplicationByCompany(
                     selectedApplication._id,
-                    reason
+                    reason,
                 );
             }
             alert("The Application has been rejected successfully.");
@@ -90,13 +90,17 @@ export default function ApplicationsTable({ applications }) {
             <table>
                 <thead>
                     <tr>
-                        {/^(Admin|Company)$/.test(loggedUser.role) ? (
+                        {/^(Admin|Company|ERO)$/.test(loggedUser.role) ? (
                             <td>Student</td>
                         ) : (
                             ""
                         )}
                         <td>Opportunity</td>
-                        {loggedUser.role === "Admin" ? <td>Company</td> : ""}
+                        {/^(Admin|ERO)$/.test(loggedUser.role) ? (
+                            <td>Company</td>
+                        ) : (
+                            ""
+                        )}
                         <td>Status</td>
                         <td>Application Date</td>
                         <td>Action</td>
@@ -194,7 +198,7 @@ export default function ApplicationsTable({ applications }) {
                         <input
                             type="text"
                             value={formatDate(
-                                selectedApplication?.applicationDate
+                                selectedApplication?.applicationDate,
                             )}
                             readOnly
                         />
@@ -242,7 +246,7 @@ export default function ApplicationsTable({ applications }) {
                         <div className="box-file">
                             <span>
                                 {getFilename(
-                                    selectedApplication?.coverLetterUrl
+                                    selectedApplication?.coverLetterUrl,
                                 )}
                             </span>
                             {selectedApplication?.coverLetterUrl ? (

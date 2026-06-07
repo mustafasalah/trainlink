@@ -3,7 +3,6 @@
 import Link from "next/link";
 import React from "react";
 import useLoggedUser from "../hooks/useLoggedUser";
-import { formatDate } from "../functions";
 
 export default function ApplicationRow({
     _id,
@@ -15,39 +14,42 @@ export default function ApplicationRow({
     onDetails,
 }) {
     const loggedUser = useLoggedUser();
-
-    const jobDeleted = !job; // job might be null
+    const jobExists = !!job;
 
     return (
         <tr>
-            {/^(Admin|Company)$/.test(loggedUser.role) ? (
+            {/^(Admin|Company|ERO)$/.test(loggedUser.role) ? (
                 <td>
-                    <Link href={`/users/${student._id}`}>
-                        {student.fullName}
-                    </Link>
+                    {student?._id ? (
+                        <Link href={`/users/${student._id}`}>
+                            {student.fullName}
+                        </Link>
+                    ) : (
+                        <span>Unknown Student</span>
+                    )}
                 </td>
             ) : (
                 ""
             )}
 
             <td>
-                {jobDeleted ? (
-                    <span style={{ color: "#999" }}>(Deleted Internship)</span>
-                ) : (
+                {jobExists ? (
                     <Link href={`/interns/${job._id}`}>{job.title}</Link>
+                ) : (
+                    <span style={{ color: "#b91c1c" }}>
+                        (Deleted Opportunity)
+                    </span>
                 )}
             </td>
 
-            {loggedUser.role === "Admin" ? (
+            {/^(Admin|ERO)$/.test(loggedUser.role) ? (
                 <td>
-                    {jobDeleted ? (
-                        <span style={{ color: "#999" }}>
-                            (Company Unavailable)
-                        </span>
-                    ) : (
+                    {jobExists ? (
                         <Link href={`/companies/${job.companyId}`}>
                             {job.companyName}
                         </Link>
+                    ) : (
+                        <span style={{ color: "#6b7280" }}>—</span>
                     )}
                 </td>
             ) : (
@@ -67,7 +69,7 @@ export default function ApplicationRow({
                 </span>
             </td>
 
-            <td>{formatDate(applicationDate)}</td>
+            <td>{applicationDate}</td>
 
             <td>
                 <Link

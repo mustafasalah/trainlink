@@ -19,7 +19,7 @@ export default async function Applications({ searchParams }) {
                 "auth-token": await getAuthToken(),
             },
             cache: "no-store",
-        }
+        },
     );
 
     const applications = await data.json();
@@ -28,7 +28,9 @@ export default async function Applications({ searchParams }) {
         <div className="content">
             <div className="applications">
                 <h3>
-                    My Applications{" "}
+                    {loggedUser.role === "ERO"
+                        ? "Applications Overview"
+                        : `${loggedUser.role === "Student" ? "My" : ""} Applications`}{" "}
                     <span>
                         (
                         {
